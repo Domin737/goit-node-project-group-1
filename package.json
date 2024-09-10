@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
-    "start:frontend": "parcel src/index.html --dist-dir dist --port 1234",
-    "start:backend": "cross-env NODE_ENV=development nodemon ./server/app.js",
+    "start": "npm run build && node server/app.js",
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "dev:frontend": "parcel src/index.html --dist-dir dist --port 1234",
+    "dev:backend": "cross-env NODE_ENV=development nodemon ./server/app.js",
     "build": "parcel build src/index.html --public-url /goit-node-project-group-1/ --dist-dir dist",
     "lint": "eslint **/*.js",
     "lint:fix": "eslint --fix **/*.js",

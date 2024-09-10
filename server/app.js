@@ -20,12 +20,12 @@ connectDB();
 const userRoutes = require('./routes/userRoutes');
 app.use('/api/users', userRoutes);
 
-// Obsługa plików statycznych z folderu src
-app.use(express.static(path.join(__dirname, '..', 'src')));
+// Obsługa plików statycznych z folderu dist
+app.use(express.static(path.join(__dirname, '..', 'dist')));
 
 // Obsługa głównej trasy
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'src', 'index.html'));
+  res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
 });
 
 // Middleware do obsługi błędów
@@ -35,7 +35,7 @@ app.use((err, req, res, next) => {
 });
 
 // Konfiguracja portu
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 1234;
 app.listen(PORT, () => {
   console.log(`Serwer działa na porcie ${PORT}`);
 });
