@@ -1,4 +1,4 @@
-// /src/index.html
+// /src/index.js
 
 import HomePage from './pages/HomePage';
 
