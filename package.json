@@ -4,10 +4,8 @@
   "private": true,
   "scripts": {
     "start": "npm run build && node server/app.js",
-    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
-    "dev:frontend": "parcel src/index.html --dist-dir dist --port 1234",
-    "dev:backend": "cross-env NODE_ENV=development nodemon ./server/app.js",
-    "build": "parcel build src/index.html --public-url /goit-node-project-group-1/ --dist-dir dist",
+    "dev": "cross-env NODE_ENV=development nodemon ./server/app.js",
+    "build": "parcel build src/index.html --public-url / --dist-dir dist",
     "lint": "eslint **/*.js",
     "lint:fix": "eslint --fix **/*.js",
     "test": "jest"
