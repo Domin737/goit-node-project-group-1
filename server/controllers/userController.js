@@ -64,6 +64,7 @@ const loginUser = async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
+      balance: user.balance,
       token, // Wysyłanie tokena
     });
   } else {
@@ -79,4 +80,31 @@ const logoutUser = async (req, res) => {
   res.status(204).send(); // Odpowiedź: brak treści
 };
 
-module.exports = { registerUser, loginUser, logoutUser };
+// Aktualizacja bilansu użytkownika
+const updateBalance = async (req, res) => {
+  const { balance } = req.body;
+  const user = req.user;
+
+  if (balance === undefined) {
+    return res.status(400).json({ message: 'Nie podano nowego bilansu' });
+  }
+
+  user.balance = balance;
+  await user.save();
+
+  res.json({ balance: user.balance });
+};
+
+// Pobieranie aktualnego bilansu użytkownika
+const getBalance = async (req, res) => {
+  const user = req.user;
+  res.json({ balance: user.balance });
+};
+
+module.exports = {
+  registerUser,
+  loginUser,
+  logoutUser,
+  updateBalance,
+  getBalance,
+};

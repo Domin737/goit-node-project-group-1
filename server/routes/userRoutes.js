@@ -5,17 +5,18 @@ const {
   registerUser,
   loginUser,
   logoutUser,
+  updateBalance,
+  getBalance,
 } = require('../controllers/userController');
 const { protect } = require('../middleware/authMiddleware');
 
 // Trasy otwarte
-router.post('/register', registerUser); // Rejestracja użytkownika
-router.post('/login', loginUser); // Logowanie użytkownika
+router.post('/register', registerUser);
+router.post('/login', loginUser);
 
 // Trasy chronione
-router.post('/logout', protect, logoutUser); // Wylogowanie użytkownika
-router.get('/profile', protect, (req, res) => {
-  res.json({ message: `Witaj, ${req.user.name}` });
-});
+router.post('/logout', protect, logoutUser);
+router.get('/balance', protect, getBalance);
+router.put('/balance', protect, updateBalance);
 
 module.exports = router;
