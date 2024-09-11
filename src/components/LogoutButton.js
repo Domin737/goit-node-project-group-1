@@ -1,19 +1,26 @@
-// src/components/LogoutButton.js
-function LogoutButton() {
-  // Stwórz przycisk
-  const button = document.createElement('button');
-  button.textContent = 'Wyloguj'; // Tekst przycisku
-  button.className = 'logout-btn'; // Dodaj klasę CSS
+// /src/components/LogoutButton.js
 
-  // Dodaj nasłuchiwanie zdarzeń
-  button.addEventListener('click', () => {
-    // Usunięcie tokena z localStorage
-    localStorage.removeItem('token');
-    // Przekierowanie użytkownika na stronę logowania
-    window.location.href = '/login';
-  });
+import { renderLogin } from './Login'; // Importowanie funkcji renderLogin
 
-  return button.outerHTML;
+export default function LogoutButton() {
+  return `
+    <button id="logout-btn">Wyloguj</button>
+  `;
 }
 
-export default LogoutButton;
+// Funkcja obsługująca wylogowanie
+export function handleLogout() {
+  // Usunięcie tokena z localStorage
+  localStorage.removeItem('userToken');
+
+  // Przekierowanie na stronę logowania
+  renderLogin(); // Przekierowanie do renderLogin
+}
+
+// Funkcja przypisująca obsługę do przycisku wylogowania
+export function attachLogoutHandler() {
+  const logoutButton = document.getElementById('logout-btn');
+  if (logoutButton) {
+    logoutButton.addEventListener('click', handleLogout);
+  }
+}
