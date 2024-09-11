@@ -30,10 +30,7 @@ export async function setupBalance() {
     }
   }
 
-  updateBalanceBtn.addEventListener('click', async () => {
-    const newBalance = prompt('Podaj nowy bilans:');
-    if (newBalance === null) return;
-
+  async function updateBalance(newBalance) {
     try {
       const response = await fetch(`${API_URL}/users/balance`, {
         method: 'PUT',
@@ -49,7 +46,18 @@ export async function setupBalance() {
       console.error('Błąd podczas aktualizacji bilansu:', error);
       alert('Wystąpił błąd podczas aktualizacji bilansu');
     }
+  }
+
+  updateBalanceBtn.addEventListener('click', async () => {
+    const newBalance = prompt('Podaj nowy bilans:');
+    if (newBalance === null) return;
+    await updateBalance(newBalance);
   });
 
   await fetchBalance();
+
+  return {
+    updateBalance,
+    refreshBalance: fetchBalance,
+  };
 }
