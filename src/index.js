@@ -1,17 +1,16 @@
 // /src/index.js
 
-import { HomePage, renderLogoutButton } from './pages/HomePage';
-import { renderLogin } from './components/Login';
+import HomePage from './pages/HomePage';
+import LoginPage, { renderLogin } from './pages/LoginPage';
 
-// Początkowa funkcja, która uruchomi renderowanie strony po załadowaniu DOM
 document.addEventListener('DOMContentLoaded', function () {
   const token = localStorage.getItem('userToken');
 
-  // Jeśli token istnieje, wyświetlamy stronę główną, inaczej stronę logowania
   if (token) {
-    document.getElementById('app').innerHTML = HomePage();
-    renderLogoutButton(); // Renderujemy przycisk wylogowania
+    document.getElementById('app').innerHTML = HomePage(); // Załadowanie strony głównej
+    // Usuwamy wywołanie renderLogoutButton, ponieważ setupLogoutButton jest teraz wywoływane w HomePage
   } else {
-    renderLogin();
+    document.getElementById('app').innerHTML = LoginPage(); // Załadowanie strony logowania
+    renderLogin(); // Przypisanie obsługi do formularza logowania
   }
 });

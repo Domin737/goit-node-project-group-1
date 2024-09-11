@@ -1,6 +1,6 @@
 // /src/components/LogoutButton.js
 
-import { renderLogin } from './Login'; // Importowanie funkcji renderLogin
+import { handleLogout } from '../utils/logoutUtils'; // Import funkcji wylogowania
 
 export default function LogoutButton() {
   return `
@@ -8,19 +8,10 @@ export default function LogoutButton() {
   `;
 }
 
-// Funkcja obsługująca wylogowanie
-export function handleLogout() {
-  // Usunięcie tokena z localStorage
-  localStorage.removeItem('userToken');
-
-  // Przekierowanie na stronę logowania
-  renderLogin(); // Przekierowanie do renderLogin
-}
-
-// Funkcja przypisująca obsługę do przycisku wylogowania
-export function attachLogoutHandler() {
-  const logoutButton = document.getElementById('logout-btn');
-  if (logoutButton) {
-    logoutButton.addEventListener('click', handleLogout);
+// Przypisanie obsługi po wyrenderowaniu
+export function setupLogoutButton() {
+  const logoutBtn = document.getElementById('logout-btn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', handleLogout);
   }
 }

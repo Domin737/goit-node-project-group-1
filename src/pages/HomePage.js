@@ -1,24 +1,20 @@
 // /src/pages/HomePage.js
 
-import LogoutButton, { attachLogoutHandler } from '../components/LogoutButton';
+import LogoutButton, { setupLogoutButton } from '../components/LogoutButton';
 
-function HomePage() {
-  return `
+export default function HomePage() {
+  const content = `
     <div>
       <h1>Witaj w aplikacji Kapu$ta!</h1>
       <p>To jest strona główna aplikacji.</p>
-      <div id="logout-container"></div>
+      ${LogoutButton()}  <!-- Renderuj przycisk wylogowania -->
     </div>
   `;
-}
 
-// Funkcja renderująca przycisk wylogowania
-function renderLogoutButton() {
-  const logoutContainer = document.getElementById('logout-container');
-  if (logoutContainer) {
-    logoutContainer.innerHTML = LogoutButton();
-    attachLogoutHandler(); // Dodanie event listenera do przycisku wylogowania
-  }
-}
+  // Wywołaj setupLogoutButton po załadowaniu strony
+  setTimeout(() => {
+    setupLogoutButton();
+  }, 0);
 
-export { HomePage, renderLogoutButton };
+  return content;
+}

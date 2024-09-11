@@ -1,5 +1,4 @@
 // /server/controllers/userController.js
-
 const User = require('../models/userModel');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
@@ -24,10 +23,8 @@ const registerUser = async (req, res) => {
     return res.status(400).json({ message: 'Użytkownik już istnieje' });
   }
 
-  // Hashowanie hasła
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  // Tworzenie nowego użytkownika
   const user = await User.create({
     name,
     email,
@@ -35,11 +32,15 @@ const registerUser = async (req, res) => {
   });
 
   if (user) {
+    const token = generateToken(user._id);
+    user.token = token; // Zapisanie tokena w bazie danych
+    await user.save();
+
     res.status(201).json({
       _id: user._id,
       name: user.name,
       email: user.email,
-      token: generateToken(user._id), // Wysyłanie tokena JWT
+      token, // Wysyłanie tokena
     });
   } else {
     res
@@ -55,15 +56,27 @@ const loginUser = async (req, res) => {
   const user = await User.findOne({ email });
 
   if (user && (await bcrypt.compare(password, user.password))) {
+    const token = generateToken(user._id);
+    user.token = token; // Zapisanie tokena w bazie danych
+    await user.save();
+
     res.json({
       _id: user._id,
       name: user.name,
       email: user.email,
-      token: generateToken(user._id), // Wysyłanie tokena JWT
+      token, // Wysyłanie tokena
     });
   } else {
     res.status(401).json({ message: 'Nieprawidłowe dane logowania' });
   }
 };
 
-module.exports = { registerUser, loginUser };
+// Wylogowanie użytkownika
+const logoutUser = async (req, res) => {
+  const user = req.user;
+  user.token = null; // Usunięcie tokena z bazy danych
+  await user.save();
+  res.status(204).send(); // Odpowiedź: brak treści
+};
+
+module.exports = { registerUser, loginUser, logoutUser };
