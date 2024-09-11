@@ -12,6 +12,14 @@ export default function LogoutButton() {
 export function setupLogoutButton() {
   const logoutBtn = document.getElementById('logout-btn');
   if (logoutBtn) {
-    logoutBtn.addEventListener('click', handleLogout);
+    logoutBtn.addEventListener('click', async e => {
+      e.preventDefault();
+      try {
+        await handleLogout();
+      } catch (error) {
+        console.error('Błąd podczas wylogowywania:', error);
+        alert('Wystąpił błąd podczas wylogowywania. Spróbuj ponownie.');
+      }
+    });
   }
 }
