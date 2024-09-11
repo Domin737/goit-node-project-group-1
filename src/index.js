@@ -1,16 +1,29 @@
 // /src/index.js
 
-import HomePage from './pages/HomePage';
-import LoginPage, { renderLogin } from './pages/LoginPage';
+import HomePage, { setupHomePage } from './pages/HomePage';
+import LoginPage, { setupAuthForms } from './pages/LoginPage';
 
-document.addEventListener('DOMContentLoaded', function () {
+function renderApp() {
   const token = localStorage.getItem('userToken');
+  const appContainer = document.getElementById('app');
 
   if (token) {
-    document.getElementById('app').innerHTML = HomePage(); // Załadowanie strony głównej
-    // Usuwamy wywołanie renderLogoutButton, ponieważ setupLogoutButton jest teraz wywoływane w HomePage
+    appContainer.innerHTML = HomePage();
+    setupHomePage();
   } else {
-    document.getElementById('app').innerHTML = LoginPage(); // Załadowanie strony logowania
-    renderLogin(); // Przypisanie obsługi do formularza logowania
+    appContainer.innerHTML = LoginPage();
+    setupAuthForms();
+  }
+}
+
+document.addEventListener('DOMContentLoaded', renderApp);
+
+// Nasłuchiwanie na zmiany w localStorage (np. po zalogowaniu lub wylogowaniu)
+window.addEventListener('storage', event => {
+  if (event.key === 'userToken') {
+    renderApp();
   }
 });
+
+// Eksportujemy funkcję renderApp, aby można było jej użyć w innych miejscach aplikacji
+export { renderApp };

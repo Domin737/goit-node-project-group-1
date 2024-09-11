@@ -1,30 +1,48 @@
 // /src/pages/LoginPage.js
 
 import Login, { handleLogin } from '../components/Login';
+import RegisterForm, { setupRegisterForm } from '../components/RegisterForm';
 
 // Funkcja renderująca stronę logowania
 export default function LoginPage() {
   return `
-    <div>
-      <h2>Logowanie</h2>
-      <form id="login-form">
-        <label for="email">Email:</label>
-        <input type="email" id="email" required />
-        
-        <label for="password">Hasło:</label>
-        <input type="password" id="password" required />
-        
-        <button type="submit">Zaloguj</button>
-      </form>
+    <div id="auth-container">
+      <div id="login-section">
+        <h2>Logowanie</h2>
+        ${Login()}
+        <button id="switch-to-register">Zarejestruj się</button>
+      </div>
+      <div id="register-section" style="display: none;">
+        ${RegisterForm()}
+        <button id="switch-to-login">Powrót do logowania</button>
+      </div>
     </div>
   `;
 }
 
-// Funkcja do przypisania obsługi logowania po załadowaniu DOM
-export function renderLogin() {
-  const loginHTML = Login();
-  document.getElementById('app').innerHTML = loginHTML;
+// Funkcja do przypisania obsługi logowania i rejestracji po załadowaniu DOM
+export function setupAuthForms() {
+  const loginForm = document.getElementById('login-form');
+  const switchToRegisterBtn = document.getElementById('switch-to-register');
+  const switchToLoginBtn = document.getElementById('switch-to-login');
+  const loginSection = document.getElementById('login-section');
+  const registerSection = document.getElementById('register-section');
 
-  // Przypisanie obsługi do formularza logowania
-  document.getElementById('login-form').addEventListener('submit', handleLogin);
+  loginForm.addEventListener('submit', handleLogin);
+
+  switchToRegisterBtn.addEventListener('click', () => {
+    loginSection.style.display = 'none';
+    registerSection.style.display = 'block';
+  });
+
+  switchToLoginBtn.addEventListener('click', () => {
+    registerSection.style.display = 'none';
+    loginSection.style.display = 'block';
+  });
+
+  setupRegisterForm(() => {
+    // Po udanej rejestracji przełącz z powrotem na formularz logowania
+    registerSection.style.display = 'none';
+    loginSection.style.display = 'block';
+  });
 }
