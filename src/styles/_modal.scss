@@ -1,42 +1,83 @@
-// /src/styles._modal.scss
+// src/styles/_modal.scss
+
+@import 'variables';
+@import 'mixins';
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
 
 .modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 300px;
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  @include card;
+  width: 90%;
+  max-width: 540px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+
+  @include tablet {
+    width: 80%;
+  }
+
+  @include desktop {
+    width: 70%;
+  }
+
+  &-header {
+    margin-bottom: $spacing-large;
+    text-align: center;
+
+    h2 {
+      font-size: $font-size-large;
+      font-weight: $font-weight-bold;
+    }
+  }
+
+  &-content {
+    margin-bottom: $spacing-large;
+  }
+
+  &-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: $spacing-medium;
+  }
+
+  &-close {
+    @include button-reset;
+    position: absolute;
+    top: $spacing-medium;
+    right: $spacing-medium;
+    font-size: 24px;
+    color: $dark-gray;
+
+    &:hover,
+    &:focus {
+      color: $primary-color;
+    }
+  }
+}
+
+// Specific modal styles
+.logout-modal {
   text-align: center;
-  padding: 20px;
-}
 
-.modal-content {
-  padding: 10px;
-}
+  .modal-content {
+    p {
+      margin-bottom: $spacing-large;
+    }
+  }
 
-button {
-  margin: 10px;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-button#modal-confirm-btn {
-  background-color: #ff751d;
-  color: #fff;
-}
-
-button#modal-cancel-btn {
-  background-color: #dcdcdc;
-  color: #333;
-}
-
-button#modal-ok-btn {
-  background-color: #ff751d;
-  color: #fff;
-  width: 100%;
+  .modal-footer {
+    justify-content: center;
+  }
 }

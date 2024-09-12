@@ -1,19 +1,112 @@
-// /src/styles._layout.scss
+// src/styles/_layout.scss
 
-#home-page {
-  padding: 20px;
+@import 'variables';
+@import 'mixins';
+
+body {
+  font-family: $font-family;
+  font-size: $font-size-base;
+  line-height: 1.5;
+  color: $text-color;
+  background-color: $background-color;
 }
 
-h1 {
-  font-size: 2em;
-  margin-bottom: 20px;
+.container {
+  width: 100%;
+  max-width: $desktop-breakpoint;
+  margin: 0 auto;
+  padding: 0 $spacing-medium;
+
+  @include tablet {
+    padding: 0 $spacing-large;
+  }
 }
 
-button {
-  background-color: #ff751d;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 5px;
-  border: none;
-  cursor: pointer;
+.main-content {
+  padding-top: $spacing-large;
+  padding-bottom: $spacing-large;
+}
+
+.header {
+  background-color: $white;
+  box-shadow: $box-shadow;
+  padding: $spacing-medium 0;
+
+  .container {
+    @include flex-between;
+  }
+
+  .logo {
+    img {
+      height: 40px;
+    }
+  }
+
+  .nav-menu {
+    display: flex;
+    gap: $spacing-medium;
+
+    @include mobile {
+      display: none;
+    }
+  }
+
+  .mobile-menu-toggle {
+    @include button-reset;
+    display: none;
+
+    @include mobile {
+      display: block;
+    }
+  }
+}
+
+.mobile-menu {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: $white;
+  z-index: 1000;
+  padding: $spacing-large;
+
+  &.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .close-menu {
+    @include button-reset;
+    position: absolute;
+    top: $spacing-medium;
+    right: $spacing-medium;
+    font-size: 24px;
+  }
+
+  .nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-large;
+    text-align: center;
+  }
+}
+
+.footer {
+  background-color: $white;
+  padding: $spacing-large 0;
+  margin-top: $spacing-large;
+
+  .container {
+    @include flex-between;
+    flex-wrap: wrap;
+  }
+
+  .copyright {
+    font-size: $font-size-small;
+    color: $dark-gray;
+  }
 }

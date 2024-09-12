@@ -1,22 +1,78 @@
-// /src/styles._balance.scss
+// src/styles/_balance.scss
 
-#balance-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+@import 'variables';
+@import 'mixins';
+
+.balance-container {
+  @include card;
+  margin-bottom: $spacing-large;
+
+  @include mobile {
+    padding: $spacing-medium;
+  }
+
+  h2 {
+    font-size: $font-size-large;
+    font-weight: $font-weight-bold;
+    margin-bottom: $spacing-medium;
+    color: $primary-color;
+  }
+
+  .balance-amount {
+    font-size: 30px;
+    font-weight: $font-weight-bold;
+    color: $text-color;
+  }
+
+  .balance-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: $spacing-large;
+
+    @include mobile {
+      flex-direction: column;
+      gap: $spacing-medium;
+    }
+
+    .btn {
+      @include mobile {
+        width: 100%;
+      }
+    }
+  }
 }
 
-#balance-amount {
-  font-size: 1.5em;
-  font-weight: bold;
-}
+.balance-form {
+  margin-top: $spacing-large;
 
-#update-balance-btn {
-  background-color: #ff751d;
-  color: #fff;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+  .form-group {
+    margin-bottom: $spacing-medium;
+
+    label {
+      display: block;
+      margin-bottom: $spacing-small;
+      font-weight: $font-weight-bold;
+    }
+
+    input {
+      @include input-style;
+    }
+  }
+
+  .btn-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: $spacing-medium;
+
+    @include mobile {
+      flex-direction: column;
+    }
+
+    .btn {
+      @include mobile {
+        width: 100%;
+      }
+    }
+  }
 }

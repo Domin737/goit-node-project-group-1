@@ -11,22 +11,26 @@ import {
   TransactionList,
   setupTransactionList,
 } from '../components/TransactionList';
-import Modal, { setupModal, setupOutsideClickModal } from '../components/Modal';
+import { showModal } from '../components/Modal';
 import { API_URL } from '../config';
 
 export default function HomePage() {
   return `
-    <div id="home-page">
-      <h1>Witaj w aplikacji Kapu$ta!</h1>
-      ${Balance()}
-      ${TransactionForm()}
-      ${TransactionList()}
-      ${LogoutButton()}
-      
-      <!-- Modale -->
-      <div id="confirmation-modal-container"></div>
-      <div id="logout-modal-container"></div>
-      <div id="zero-balance-modal-container"></div>
+    <div class="container">
+      <header class="header">
+        <div class="logo">
+          <img src="path_to_logo.svg" alt="Kapu$ta Logo">
+        </div>
+        ${LogoutButton()}
+      </header>
+      <main class="main-content">
+        <h1 class="visually-hidden">Kapu$ta - Strona główna</h1>
+        ${Balance()}
+        <div class="transactions-container">
+          ${TransactionForm()}
+          ${TransactionList()}
+        </div>
+      </main>
     </div>
   `;
 }
@@ -35,117 +39,48 @@ export async function setupHomePage() {
   const balanceSetup = await setupBalance();
   const transactionListSetup = await setupTransactionList(async newBalance => {
     await balanceSetup.updateBalance(newBalance);
-
-    // Sprawdzenie, czy bilans wynosi 0 po operacji
     if (newBalance === 0) {
       showZeroBalanceModal();
     }
   });
 
   setupTransactionForm(async (transaction, newBalance) => {
-    // Aktualizacja balansu i odświeżenie listy transakcji po dodaniu transakcji
     await balanceSetup.updateBalance(newBalance);
     await transactionListSetup.refreshTransactions();
-
-    // Sprawdzenie, czy bilans wynosi 0 po dodaniu transakcji
     if (newBalance === 0) {
       showZeroBalanceModal();
     }
   });
 
-  // Sprawdzenie bilansu po załadowaniu strony
   const currentBalance = await fetchCurrentBalance();
   if (currentBalance === 0) {
     showZeroBalanceModal();
   }
 
-  // Obsługa przycisku wylogowania
   setupLogoutButton(() => {
     showLogoutModal();
   });
 }
 
-// Funkcja do pokazywania modala dla zerowego bilansu (OK)
 function showZeroBalanceModal() {
-  const zeroBalanceModalContainer = document.getElementById(
-    'zero-balance-modal-container'
-  );
-  zeroBalanceModalContainer.innerHTML = Modal({
+  showModal({
     message:
       "Hello! To get started, enter the current balance of your account! You can't spend money until you have it :)",
     confirmLabel: 'OK',
-    confirmAction: () => {
-      zeroBalanceModalContainer.innerHTML = ''; // Ukryj modal po kliknięciu "OK"
-    },
+    confirmAction: () => {},
   });
-
-  setupModal(() => {
-    zeroBalanceModalContainer.innerHTML = ''; // Ukryj modal po kliknięciu "OK"
-  });
-
-  // Umożliwienie zamknięcia modala po kliknięciu poza nim
-  setupOutsideClickModal(zeroBalanceModalContainer, '.modal');
 }
 
-// Funkcja do pokazywania modala wylogowania (YES/NO)
 function showLogoutModal() {
-  const logoutModalContainer = document.getElementById(
-    'logout-modal-container'
-  );
-  logoutModalContainer.innerHTML = Modal({
+  showModal({
     message: 'Czy na pewno chcesz się wylogować?',
     confirmLabel: 'Tak',
     cancelLabel: 'Nie',
-    confirmAction: () => {
-      handleLogout();
-      logoutModalContainer.innerHTML = ''; // Ukryj modal po wylogowaniu
-    },
-    cancelAction: () => {
-      logoutModalContainer.innerHTML = ''; // Ukryj modal po anulowaniu
-    },
+    confirmAction: handleLogout,
+    cancelAction: () => {},
   });
-
-  setupModal(
-    () => {
-      handleLogout();
-      logoutModalContainer.innerHTML = ''; // Ukryj modal po wylogowaniu
-    },
-    () => {
-      logoutModalContainer.innerHTML = ''; // Ukryj modal po anulowaniu
-    }
-  );
 }
 
-// Funkcja do pokazywania modala potwierdzającego akcję (YES/NO)
-function showConfirmationModal(message, confirmAction) {
-  const confirmationModalContainer = document.getElementById(
-    'confirmation-modal-container'
-  );
-  confirmationModalContainer.innerHTML = Modal({
-    message,
-    confirmLabel: 'YES',
-    cancelLabel: 'NO',
-    confirmAction: () => {
-      confirmAction();
-      confirmationModalContainer.innerHTML = ''; // Ukryj modal po potwierdzeniu
-    },
-    cancelAction: () => {
-      confirmationModalContainer.innerHTML = ''; // Ukryj modal po anulowaniu
-    },
-  });
-
-  setupModal(
-    () => {
-      confirmAction();
-      confirmationModalContainer.innerHTML = ''; // Ukryj modal po potwierdzeniu
-    },
-    () => {
-      confirmationModalContainer.innerHTML = ''; // Ukryj modal po anulowaniu
-    }
-  );
-}
-
-// Funkcja do pobierania bieżącego bilansu z backendu
 async function fetchCurrentBalance() {
   try {
     const response = await fetch(`${API_URL}/users/balance`, {

@@ -4,9 +4,9 @@ import Modal, { setupModal } from './Modal';
 
 export function TransactionList() {
   return `
-    <div id="transaction-list-container">
-      <h2>Lista transakcji</h2>
-      <ul id="transaction-list"></ul>
+    <div class="transaction-container">
+      <h3>Lista transakcji</h3>
+      <ul id="transaction-list" class="transaction-list"></ul>
     </div>
   `;
 }
@@ -34,10 +34,19 @@ export async function setupTransactionList(onTransactionDeleted) {
       .map(
         transaction => `
         <li data-id="${transaction._id}">
-          ${transaction.type === 'income' ? '📈' : '📉'}
-          ${transaction.category} - ${transaction.amount.toFixed(2)} EUR
-          (${transaction.description})
-          <button class="delete-transaction">Usuń</button>
+          <div class="transaction-info">
+            <span class="transaction-icon">${
+              transaction.type === 'income' ? '📈' : '📉'
+            }</span>
+            <div class="transaction-details">
+              <span class="category">${transaction.category}</span>
+              <span class="description">${transaction.description}</span>
+            </div>
+          </div>
+          <span class="transaction-amount ${
+            transaction.type
+          }">${transaction.amount.toFixed(2)} UAH</span>
+          <button class="delete-transaction btn-icon">🗑️</button>
         </li>
       `
       )
@@ -95,31 +104,30 @@ export async function setupTransactionList(onTransactionDeleted) {
   };
 }
 
-// Funkcja pokazująca modal potwierdzający usunięcie transakcji
 function showConfirmationModal(message, confirmAction) {
   const confirmationModalContainer = document.getElementById(
     'confirmation-modal-container'
   );
   confirmationModalContainer.innerHTML = Modal({
     message,
-    confirmLabel: 'YES',
-    cancelLabel: 'NO',
+    confirmLabel: 'TAK',
+    cancelLabel: 'NIE',
     confirmAction: () => {
       confirmAction();
-      confirmationModalContainer.innerHTML = ''; // Ukryj modal po potwierdzeniu
+      confirmationModalContainer.innerHTML = '';
     },
     cancelAction: () => {
-      confirmationModalContainer.innerHTML = ''; // Ukryj modal po anulowaniu
+      confirmationModalContainer.innerHTML = '';
     },
   });
 
   setupModal(
     () => {
       confirmAction();
-      confirmationModalContainer.innerHTML = ''; // Ukryj modal po potwierdzeniu
+      confirmationModalContainer.innerHTML = '';
     },
     () => {
-      confirmationModalContainer.innerHTML = ''; // Ukryj modal po anulowaniu
+      confirmationModalContainer.innerHTML = '';
     }
   );
 }

@@ -1,0 +1,71 @@
+// src/styles/_buttons.scss
+
+@import 'variables';
+@import 'mixins';
+
+.btn {
+  @include button-reset;
+  padding: $spacing-medium $spacing-large;
+  font-size: $font-size-base;
+  font-weight: $font-weight-bold;
+  border-radius: $border-radius-small;
+  transition: background-color $transition-speed, color $transition-speed;
+  text-align: center;
+
+  &-primary {
+    background-color: $primary-color;
+    color: $white;
+
+    &:hover,
+    &:focus {
+      background-color: darken($primary-color, 10%);
+    }
+  }
+
+  &-secondary {
+    background-color: $white;
+    color: $primary-color;
+    border: 1px solid $primary-color;
+
+    &:hover,
+    &:focus {
+      background-color: $secondary-color;
+    }
+  }
+
+  &-google {
+    background-color: $white;
+    color: $text-color;
+    border: 1px solid $dark-gray;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      margin-right: $spacing-small;
+    }
+
+    &:hover,
+    &:focus {
+      background-color: $light-gray;
+    }
+  }
+
+  &-icon {
+    @include flex-center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: $gray;
+
+    &:hover,
+    &:focus {
+      background-color: $secondary-color;
+    }
+  }
+}
+
+.btn-group {
+  display: flex;
+  gap: $spacing-medium;
+}

@@ -2,7 +2,6 @@
 import { API_URL } from '../config';
 import Modal, { setupModal } from './Modal';
 
-// Funkcja pokazująca modal potwierdzający aktualizację bilansu
 function showConfirmationModal(message, confirmAction) {
   const confirmationModalContainer = document.getElementById(
     'confirmation-modal-container'
@@ -13,30 +12,33 @@ function showConfirmationModal(message, confirmAction) {
     cancelLabel: 'NO',
     confirmAction: () => {
       confirmAction();
-      confirmationModalContainer.innerHTML = ''; // Ukryj modal po potwierdzeniu
+      confirmationModalContainer.innerHTML = '';
     },
     cancelAction: () => {
-      confirmationModalContainer.innerHTML = ''; // Ukryj modal po anulowaniu
+      confirmationModalContainer.innerHTML = '';
     },
   });
 
   setupModal(
     () => {
       confirmAction();
-      confirmationModalContainer.innerHTML = ''; // Ukryj modal po potwierdzeniu
+      confirmationModalContainer.innerHTML = '';
     },
     () => {
-      confirmationModalContainer.innerHTML = ''; // Ukryj modal po anulowaniu
+      confirmationModalContainer.innerHTML = '';
     }
   );
 }
 
 export function Balance() {
   return `
-    <div id="balance-container">
-      <h2>Bilans</h2>
-      <p id="balance-amount">Ładowanie...</p>
-      <button id="update-balance-btn">Aktualizuj bilans</button>
+    <div class="balance-container">
+      <h2>Twój bilans</h2>
+      <p id="balance-amount" class="balance-amount">Ładowanie...</p>
+      <div class="balance-actions">
+        <button id="update-balance-btn" class="btn btn-primary">Aktualizuj bilans</button>
+        <button id="show-reports-btn" class="btn btn-secondary">Przejdź do raportów</button>
+      </div>
     </div>
   `;
 }
@@ -44,6 +46,7 @@ export function Balance() {
 export async function setupBalance() {
   const balanceAmount = document.getElementById('balance-amount');
   const updateBalanceBtn = document.getElementById('update-balance-btn');
+  const showReportsBtn = document.getElementById('show-reports-btn');
 
   async function fetchBalance() {
     try {
@@ -53,7 +56,7 @@ export async function setupBalance() {
         },
       });
       const data = await response.json();
-      balanceAmount.textContent = `${data.balance.toFixed(2)} EUR`;
+      balanceAmount.textContent = `${data.balance.toFixed(2)} UAH`;
     } catch (error) {
       console.error('Błąd podczas pobierania bilansu:', error);
       balanceAmount.textContent = 'Błąd podczas ładowania bilansu';
@@ -71,9 +74,8 @@ export async function setupBalance() {
         body: JSON.stringify({ balance: parseFloat(newBalance) }),
       });
       const data = await response.json();
-      balanceAmount.textContent = `${data.balance.toFixed(2)} EUR`;
+      balanceAmount.textContent = `${data.balance.toFixed(2)} UAH`;
 
-      // Sprawdzenie, czy zaktualizowany bilans wynosi 0 i wyświetlenie modala
       if (data.balance === 0) {
         showZeroBalanceModal();
       }
@@ -83,16 +85,50 @@ export async function setupBalance() {
     }
   }
 
-  updateBalanceBtn.addEventListener('click', async () => {
-    const newBalance = prompt('Podaj nowy bilans:');
-    if (newBalance === null) return;
+  updateBalanceBtn.addEventListener('click', () => {
+    const balanceForm = `
+      <div class="balance-form">
+        <div class="form-group">
+          <label for="new-balance">Nowy bilans:</label>
+          <input type="number" id="new-balance" step="0.01" required>
+        </div>
+        <div class="btn-group">
+          <button id="confirm-balance" class="btn btn-primary">Potwierdź</button>
+          <button id="cancel-balance" class="btn btn-secondary">Anuluj</button>
+        </div>
+      </div>
+    `;
 
-    showConfirmationModal(
-      'Czy na pewno chcesz zaktualizować bilans?',
-      async () => {
-        await updateBalance(newBalance);
+    const balanceContainer = document.querySelector('.balance-container');
+    balanceContainer.insertAdjacentHTML('beforeend', balanceForm);
+
+    const confirmBalanceBtn = document.getElementById('confirm-balance');
+    const cancelBalanceBtn = document.getElementById('cancel-balance');
+    const newBalanceInput = document.getElementById('new-balance');
+
+    confirmBalanceBtn.addEventListener('click', async () => {
+      const newBalance = newBalanceInput.value;
+      if (newBalance) {
+        showConfirmationModal(
+          'Czy na pewno chcesz zaktualizować bilans?',
+          async () => {
+            await updateBalance(newBalance);
+            balanceContainer.removeChild(
+              document.querySelector('.balance-form')
+            );
+          }
+        );
       }
-    );
+    });
+
+    cancelBalanceBtn.addEventListener('click', () => {
+      balanceContainer.removeChild(document.querySelector('.balance-form'));
+    });
+  });
+
+  showReportsBtn.addEventListener('click', () => {
+    // Tutaj dodaj logikę przejścia do strony raportów
+    console.log('Przejście do raportów');
   });
 
   await fetchBalance();
@@ -103,7 +139,6 @@ export async function setupBalance() {
   };
 }
 
-// Funkcja do pokazywania modala zerowego bilansu
 function showZeroBalanceModal() {
   const zeroBalanceModalContainer = document.getElementById(
     'zero-balance-modal-container'
@@ -113,14 +148,11 @@ function showZeroBalanceModal() {
       "Hello! To get started, enter the current balance of your account! You can't spend money until you have it :)",
     confirmLabel: 'OK',
     confirmAction: () => {
-      zeroBalanceModalContainer.innerHTML = ''; // Ukryj modal po kliknięciu "OK"
+      zeroBalanceModalContainer.innerHTML = '';
     },
   });
 
   setupModal(() => {
-    zeroBalanceModalContainer.innerHTML = ''; // Ukryj modal po kliknięciu "OK"
+    zeroBalanceModalContainer.innerHTML = '';
   });
-
-  // Umożliwienie zamknięcia modala po kliknięciu poza nim
-  setupOutsideClickModal(zeroBalanceModalContainer, '.modal');
 }
