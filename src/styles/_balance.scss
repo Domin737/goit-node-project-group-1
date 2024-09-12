@@ -1,0 +1,22 @@
+// /src/styles._balance.scss
+
+#balance-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+#balance-amount {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+#update-balance-btn {
+  background-color: #ff751d;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}

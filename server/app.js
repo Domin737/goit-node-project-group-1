@@ -18,7 +18,10 @@ connectDB();
 
 // Importowanie i używanie tras API
 const userRoutes = require('./routes/userRoutes');
+const transactionRoutes = require('./routes/transactionRoutes');
+
 app.use('/api/users', userRoutes);
+app.use('/api/transactions', transactionRoutes);
 
 // Serwowanie plików frontendu z folderu "dist"
 app.use(express.static(path.join(__dirname, '..', 'dist')));

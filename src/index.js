@@ -2,6 +2,7 @@
 
 import HomePage, { setupHomePage } from './pages/HomePage';
 import LoginPage, { setupAuthForms } from './pages/LoginPage';
+import './styles/index.scss';
 
 function renderApp() {
   const token = localStorage.getItem('userToken');

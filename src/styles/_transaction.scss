@@ -1,0 +1,24 @@
+// /src/styles._transaction.scss
+
+#transaction-form-container {
+  margin-top: 20px;
+}
+
+#transaction-list-container {
+  margin-top: 30px;
+}
+
+#transaction-list li {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.delete-transaction {
+  background-color: #ff751d;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
