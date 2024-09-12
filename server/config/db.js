@@ -1,5 +1,4 @@
-// /server/config/db.js
-
+// server/config/db.js
 const mongoose = require('mongoose');
 require('dotenv').config();
 
@@ -7,9 +6,9 @@ require('dotenv').config();
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI); // Usunięcie przestarzałych opcji
-    console.log('Połączono z MongoDB');
+    console.log('Connected to MongoDB');
   } catch (err) {
-    console.error(`Błąd połączenia z MongoDB: ${err.message}`);
+    console.error(`Error connecting to MongoDB: ${err.message}`);
     process.exit(1); // Zakończ aplikację przy błędzie połączenia
   }
 };

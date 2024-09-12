@@ -1,1 +1,1 @@
-// /src/components/Incomes.js
+// src/components/Incomes.js

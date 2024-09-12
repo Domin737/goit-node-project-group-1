@@ -4,17 +4,17 @@ import { API_URL } from '../config';
 export function TransactionForm() {
   return `
     <div id="transaction-form-container">
-      <h2>Dodaj transakcję</h2>
+      <h2>Add transaction</h2>
       <form id="transaction-form">
         <select id="transaction-type" required>
-          <option value="">Wybierz typ</option>
-          <option value="income">Przychód</option>
-          <option value="expense">Wydatek</option>
+          <option value="">Select type</option>
+          <option value="income">Income</option>
+          <option value="expense">Expense</option>
         </select>
-        <input type="text" id="transaction-category" placeholder="Kategoria" required>
-        <input type="number" id="transaction-amount" placeholder="Kwota" step="0.01" required>
-        <input type="text" id="transaction-description" placeholder="Opis" required>
-        <button type="submit">Dodaj</button>
+        <input type="text" id="transaction-category" placeholder="Category" required>
+        <input type="number" id="transaction-amount" placeholder="Sum" step="0.01" required>
+        <input type="text" id="transaction-description" placeholder="Description" required>
+        <button type="submit">Add</button>
       </form>
     </div>
   `;
@@ -46,19 +46,19 @@ export function setupTransactionForm(onTransactionAdded) {
       });
 
       if (!response.ok) {
-        throw new Error('Błąd podczas dodawania transakcji');
+        throw new Error('Error while adding transaction');
       }
 
       const result = await response.json();
-      alert('Transakcja dodana pomyślnie');
+      alert('Transaction added successfully');
       form.reset();
 
       if (onTransactionAdded) {
         onTransactionAdded(result.transaction, result.newBalance);
       }
     } catch (error) {
-      console.error('Błąd podczas dodawania transakcji:', error);
-      alert('Wystąpił błąd podczas dodawania transakcji');
+      console.error('Error while adding transaction:', error);
+      alert('An error occurred while adding the transaction.');
     }
   });
 }

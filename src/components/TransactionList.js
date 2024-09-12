@@ -5,7 +5,7 @@ import Modal, { setupModal } from './Modal';
 export function TransactionList() {
   return `
     <div class="transaction-container">
-      <h3>Lista transakcji</h3>
+      <h3>List of transactions</h3>
       <ul id="transaction-list" class="transaction-list"></ul>
     </div>
   `;
@@ -24,8 +24,8 @@ export async function setupTransactionList(onTransactionDeleted) {
       const transactions = await response.json();
       renderTransactions(transactions);
     } catch (error) {
-      console.error('Błąd podczas pobierania transakcji:', error);
-      transactionList.innerHTML = '<li>Błąd podczas ładowania transakcji</li>';
+      console.error('Error downloading transaction:', error);
+      transactionList.innerHTML = '<li>Error loading transaction</li>';
     }
   }
 
@@ -45,7 +45,7 @@ export async function setupTransactionList(onTransactionDeleted) {
           </div>
           <span class="transaction-amount ${
             transaction.type
-          }">${transaction.amount.toFixed(2)} UAH</span>
+          }">${transaction.amount.toFixed(2)} EUR</span>
           <button class="delete-transaction btn-icon">🗑️</button>
         </li>
       `
@@ -61,7 +61,7 @@ export async function setupTransactionList(onTransactionDeleted) {
       button.addEventListener('click', async e => {
         const transactionId = e.target.closest('li').dataset.id;
         showConfirmationModal(
-          'Czy na pewno chcesz usunąć transakcję?',
+          'Are you sure you want to delete the transaction?',
           async () => {
             try {
               const response = await fetch(
@@ -77,19 +77,19 @@ export async function setupTransactionList(onTransactionDeleted) {
               );
 
               if (!response.ok) {
-                throw new Error('Błąd podczas usuwania transakcji');
+                throw new Error('Error deleting transaction');
               }
 
               const result = await response.json();
               e.target.closest('li').remove();
-              alert('Transakcja usunięta pomyślnie');
+              alert('Transaction deleted successfully');
 
               if (onTransactionDeleted) {
                 onTransactionDeleted(result.newBalance);
               }
             } catch (error) {
-              console.error('Błąd podczas usuwania transakcji:', error);
-              alert('Wystąpił błąd podczas usuwania transakcji');
+              console.error('Error while deleting transaction:', error);
+              alert('An error occurred while deleting the transaction');
             }
           }
         );
@@ -110,8 +110,8 @@ function showConfirmationModal(message, confirmAction) {
   );
   confirmationModalContainer.innerHTML = Modal({
     message,
-    confirmLabel: 'TAK',
-    cancelLabel: 'NIE',
+    confirmLabel: 'YES',
+    cancelLabel: 'NO',
     confirmAction: () => {
       confirmAction();
       confirmationModalContainer.innerHTML = '';

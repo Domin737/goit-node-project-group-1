@@ -34,10 +34,10 @@ export function Balance() {
   return `
     <div class="balance-container">
       <h2>Twój bilans</h2>
-      <p id="balance-amount" class="balance-amount">Ładowanie...</p>
+      <p id="balance-amount" class="balance-amount">Landing...</p>
       <div class="balance-actions">
-        <button id="update-balance-btn" class="btn btn-primary">Aktualizuj bilans</button>
-        <button id="show-reports-btn" class="btn btn-secondary">Przejdź do raportów</button>
+        <button id="update-balance-btn" class="btn btn-primary">Update balance sheet</button>
+        <button id="show-reports-btn" class="btn btn-secondary">Go to reports</button>
       </div>
     </div>
   `;
@@ -56,10 +56,10 @@ export async function setupBalance() {
         },
       });
       const data = await response.json();
-      balanceAmount.textContent = `${data.balance.toFixed(2)} UAH`;
+      balanceAmount.textContent = `${data.balance.toFixed(2)} EUR`;
     } catch (error) {
-      console.error('Błąd podczas pobierania bilansu:', error);
-      balanceAmount.textContent = 'Błąd podczas ładowania bilansu';
+      console.error('Error while retrieving balance:', error);
+      balanceAmount.textContent = 'Error while loading balance';
     }
   }
 
@@ -74,14 +74,14 @@ export async function setupBalance() {
         body: JSON.stringify({ balance: parseFloat(newBalance) }),
       });
       const data = await response.json();
-      balanceAmount.textContent = `${data.balance.toFixed(2)} UAH`;
+      balanceAmount.textContent = `${data.balance.toFixed(2)} EUR`;
 
       if (data.balance === 0) {
         showZeroBalanceModal();
       }
     } catch (error) {
-      console.error('Błąd podczas aktualizacji bilansu:', error);
-      alert('Wystąpił błąd podczas aktualizacji bilansu');
+      console.error('Error updating balance:', error);
+      alert('An error occurred while updating the balance sheet');
     }
   }
 
@@ -89,7 +89,7 @@ export async function setupBalance() {
     const balanceForm = `
       <div class="balance-form">
         <div class="form-group">
-          <label for="new-balance">Nowy bilans:</label>
+          <label for="new-balance">New balance:</label>
           <input type="number" id="new-balance" step="0.01" required>
         </div>
         <div class="btn-group">
@@ -110,7 +110,7 @@ export async function setupBalance() {
       const newBalance = newBalanceInput.value;
       if (newBalance) {
         showConfirmationModal(
-          'Czy na pewno chcesz zaktualizować bilans?',
+          'Are you sure you want to update your balance?',
           async () => {
             await updateBalance(newBalance);
             balanceContainer.removeChild(
@@ -128,7 +128,7 @@ export async function setupBalance() {
 
   showReportsBtn.addEventListener('click', () => {
     // Tutaj dodaj logikę przejścia do strony raportów
-    console.log('Przejście do raportów');
+    console.log('Go to reports');
   });
 
   await fetchBalance();

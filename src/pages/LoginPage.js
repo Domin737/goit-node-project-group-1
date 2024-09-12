@@ -1,5 +1,4 @@
-// /src/pages/LoginPage.js
-
+// src/pages/LoginPage.js
 import Login, { handleLogin } from '../components/Login';
 import RegisterForm, { setupRegisterForm } from '../components/RegisterForm';
 
@@ -8,13 +7,16 @@ export default function LoginPage() {
   return `
     <div id="auth-container">
       <div id="login-section">
-        <h2>Logowanie</h2>
+        <div class="logo">
+          <img src="../images/logo-small.png" alt="Kapu$ta Logo">
+        </div>
+        <h2>Kapu$ta</h2>
         ${Login()}
-        <button id="switch-to-register">Zarejestruj się</button>
+        <button id="switch-to-register">Registration</button>
       </div>
       <div id="register-section" style="display: none;">
         ${RegisterForm()}
-        <button id="switch-to-login">Powrót do logowania</button>
+        <button id="switch-to-login">Log in</button>
       </div>
     </div>
   `;

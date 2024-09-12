@@ -1,5 +1,4 @@
-// /server/models/transactionModel.js
-
+// server/models/transactionModel.js
 const mongoose = require('mongoose');
 
 const transactionSchema = mongoose.Schema(

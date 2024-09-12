@@ -1,5 +1,4 @@
-// /src/components/Login.js
-
+// src/components/Login.js
 import { API_URL } from '../config';
 import { renderApp } from '../index';
 
@@ -24,19 +23,19 @@ export async function handleLogin(event) {
 
     if (response.ok) {
       // Zalogowano pomyślnie, zapisujemy token
-      console.log('Zalogowano pomyślnie:', data);
+      console.log('Successfully logged in:', data);
       localStorage.setItem('userToken', data.token);
 
       // Wywołanie renderApp do przerysowania aplikacji
       renderApp();
     } else {
       // Obsługa błędów logowania
-      console.error('Błąd logowania:', data.message || 'Nieznany błąd');
-      alert(`Błąd logowania: ${data.message}`);
+      console.error('Login error:', data.message || 'Unknown error');
+      alert(`Login error: ${data.message}`);
     }
   } catch (error) {
-    console.error('Wystąpił problem z logowaniem:', error);
-    alert('Wystąpił problem z logowaniem. Spróbuj ponownie później.');
+    console.error('There was a problem logging in:', error);
+    alert('There was a problem logging in. Please try again later.');
   }
 }
 
@@ -47,10 +46,10 @@ export default function Login() {
       <label for="email">Email:</label>
       <input type="email" id="email" required />
       
-      <label for="password">Hasło:</label>
+      <label for="password">Password:</label>
       <input type="password" id="password" required />
       
-      <button type="submit">Zaloguj</button>
+      <button type="submit">Log in</button>
     </form>
   `;
 }

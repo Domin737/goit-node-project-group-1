@@ -1,5 +1,4 @@
-// /server/app.js
-
+// server/app.js
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -34,11 +33,11 @@ app.get('*', (req, res) => {
 // Middleware do obsługi błędów
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ message: err.message || 'Wystąpił błąd serwera' });
+  res.status(500).json({ message: err.message || 'A server error occurred' });
 });
 
 // Konfiguracja portu
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Serwer działa na porcie ${PORT}`);
+  console.log(`The server is running on the port: ${PORT}`);
 });

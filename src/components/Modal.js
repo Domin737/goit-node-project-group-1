@@ -1,11 +1,10 @@
 // src/components/Modal.js
-
 export default function Modal({
   message,
   confirmAction,
-  confirmLabel = 'TAK',
+  confirmLabel = 'YES',
   cancelAction = null,
-  cancelLabel = 'NIE',
+  cancelLabel = 'NO',
 }) {
   return `
     <div class="modal-overlay">

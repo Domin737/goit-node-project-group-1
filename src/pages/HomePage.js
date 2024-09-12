@@ -1,5 +1,4 @@
 // src/pages/HomePage.js
-
 import LogoutButton, { setupLogoutButton } from '../components/LogoutButton';
 import { handleLogout } from '../utils/logoutUtils';
 import { Balance, setupBalance } from '../components/Balance';
@@ -19,7 +18,7 @@ export default function HomePage() {
     <div class="container">
       <header class="header">
         <div class="logo">
-          <img src="path_to_logo.svg" alt="Kapu$ta Logo">
+          <img src="../images/logo-small.png" alt="Kapu$ta Logo">
         </div>
         ${LogoutButton()}
       </header>
@@ -73,9 +72,9 @@ function showZeroBalanceModal() {
 
 function showLogoutModal() {
   showModal({
-    message: 'Czy na pewno chcesz się wylogować?',
-    confirmLabel: 'Tak',
-    cancelLabel: 'Nie',
+    message: 'Are you sure you want to log out?',
+    confirmLabel: 'YES',
+    cancelLabel: 'NO',
     confirmAction: handleLogout,
     cancelAction: () => {},
   });
@@ -91,7 +90,7 @@ async function fetchCurrentBalance() {
     const data = await response.json();
     return data.balance;
   } catch (error) {
-    console.error('Błąd podczas pobierania bilansu:', error);
+    console.error('Error while retrieving balance:', error);
     return null;
   }
 }

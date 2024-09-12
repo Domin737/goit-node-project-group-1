@@ -1,4 +1,4 @@
-// /server/controllers/userController.js
+// server/controllers/userController.js
 const User = require('../models/userModel');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
@@ -15,12 +15,14 @@ const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
-    return res.status(400).json({ message: 'Proszę wypełnić wszystkie pola' });
+    return res.status(400).json({ message: 'Please fill all fields' });
   }
 
   const userExists = await User.findOne({ email });
   if (userExists) {
-    return res.status(400).json({ message: 'Użytkownik już istnieje' });
+    return res
+      .status(400)
+      .json({ message: 'The email address is already registered' });
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -43,9 +45,7 @@ const registerUser = async (req, res) => {
       token, // Wysyłanie tokena
     });
   } else {
-    res
-      .status(400)
-      .json({ message: 'Nie udało się zarejestrować użytkownika' });
+    res.status(400).json({ message: 'Failed to register user' });
   }
 };
 
@@ -68,7 +68,7 @@ const loginUser = async (req, res) => {
       token, // Wysyłanie tokena
     });
   } else {
-    res.status(401).json({ message: 'Nieprawidłowe dane logowania' });
+    res.status(401).json({ message: 'Incorrect login information' });
   }
 };
 
@@ -86,7 +86,9 @@ const updateBalance = async (req, res) => {
   const user = req.user;
 
   if (balance === undefined) {
-    return res.status(400).json({ message: 'Nie podano nowego bilansu' });
+    return res
+      .status(400)
+      .json({ message: 'No new balance sheet was provided' });
   }
 
   user.balance = balance;

@@ -1,5 +1,4 @@
-// /server/middleware/authMiddleware.js
-
+// server/middleware/authMiddleware.js
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 
@@ -23,14 +22,12 @@ const protect = async (req, res, next) => {
       next();
     } catch (error) {
       console.error(error);
-      res
-        .status(401)
-        .json({ message: 'Brak autoryzacji, token nieprawidłowy' });
+      res.status(401).json({ message: 'No authorization, invalid token' });
     }
   }
 
   if (!token) {
-    res.status(401).json({ message: 'Brak autoryzacji, brak tokena' });
+    res.status(401).json({ message: 'No authorization, no token' });
   }
 };
 
