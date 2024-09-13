@@ -1,11 +1,10 @@
 // src/components/RegisterForm.js
-
 export default function RegisterForm() {
   return `
     <form id="register-form">
-      <h2>Rejestracja</h2>
+      <h2>Registration</h2>
       <div>
-        <label for="register-name">Imię:</label>
+        <label for="register-name">Name:</label>
         <input type="text" id="register-name" name="name" required>
       </div>
       <div>
@@ -13,10 +12,10 @@ export default function RegisterForm() {
         <input type="email" id="register-email" name="email" required>
       </div>
       <div>
-        <label for="register-password">Hasło:</label>
+        <label for="register-password">Password:</label>
         <input type="password" id="register-password" name="password" required>
       </div>
-      <button type="submit">Zarejestruj się</button>
+      <button type="submit">Sign up</button>
     </form>
   `;
 }
@@ -38,15 +37,15 @@ export function setupRegisterForm(onRegisterSuccess) {
       });
 
       if (response.ok) {
-        alert('Rejestracja udana! Możesz się teraz zalogować.');
+        alert('Registration successful! You can now log in.');
         onRegisterSuccess();
       } else {
         const errorData = await response.json();
-        alert(`Błąd rejestracji: ${errorData.message}`);
+        alert(`Registration error: ${errorData.message}`);
       }
     } catch (error) {
-      console.error('Błąd podczas rejestracji:', error);
-      alert('Wystąpił błąd podczas rejestracji. Spróbuj ponownie później.');
+      console.error('Registration error:', error);
+      alert('An error occurred while registering. Please try again later.');
     }
   });
 }

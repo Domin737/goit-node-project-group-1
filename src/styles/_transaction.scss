@@ -1,24 +1,136 @@
-// /src/styles._transaction.scss
+// src/styles/_transaction.scss
+@import 'variables';
+@import 'mixins';
 
-#transaction-form-container {
-  margin-top: 20px;
+.transaction-container {
+  @include card;
+  margin-bottom: $spacing-large;
 }
 
-#transaction-list-container {
-  margin-top: 30px;
+.transaction-form {
+  margin-bottom: $spacing-large;
+
+  h3 {
+    font-size: $font-size-large;
+    font-weight: $font-weight-bold;
+    margin-bottom: $spacing-medium;
+  }
+
+  form {
+    display: grid;
+    gap: $spacing-medium;
+
+    @include tablet {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include desktop {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .form-group {
+    label {
+      display: block;
+      margin-bottom: $spacing-small;
+      font-weight: $font-weight-bold;
+    }
+
+    input,
+    select {
+      @include input-style;
+    }
+  }
+
+  .btn-group {
+    display: flex;
+    gap: $spacing-medium;
+    grid-column: 1 / -1;
+
+    @include mobile {
+      flex-direction: column;
+    }
+
+    .btn {
+      @include mobile {
+        width: 100%;
+      }
+    }
+  }
 }
 
-#transaction-list li {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
+.transaction-list {
+  h3 {
+    font-size: $font-size-large;
+    font-weight: $font-weight-bold;
+    margin-bottom: $spacing-medium;
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  li {
+    @include flex-between;
+    padding: $spacing-medium;
+    border-bottom: 1px solid $light-gray;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .transaction-info {
+    display: flex;
+    align-items: center;
+    gap: $spacing-medium;
+  }
+
+  .transaction-icon {
+    font-size: 24px;
+  }
+
+  .transaction-details {
+    .category {
+      font-weight: $font-weight-bold;
+    }
+
+    .description {
+      font-size: $font-size-small;
+      color: $dark-gray;
+    }
+  }
+
+  .transaction-amount {
+    font-weight: $font-weight-bold;
+
+    &.income {
+      color: green;
+    }
+
+    &.expense {
+      color: $error-color;
+    }
+  }
+
+  .delete-transaction {
+    @include button-reset;
+    color: $dark-gray;
+    font-size: 18px;
+
+    &:hover {
+      color: $error-color;
+    }
+  }
 }
 
-.delete-transaction {
-  background-color: #ff751d;
-  color: white;
-  padding: 5px 10px;
-  border-radius: 5px;
-  border: none;
-  cursor: pointer;
+.transaction-summary {
+  margin-top: $spacing-large;
+  text-align: right;
+
+  .total {
+    font-size: $font-size-large;
+    font-weight: $font-weight-bold;
+  }
 }

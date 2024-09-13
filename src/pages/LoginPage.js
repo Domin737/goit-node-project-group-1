@@ -1,20 +1,24 @@
-// /src/pages/LoginPage.js
-
+// src/pages/LoginPage.js
 import Login, { handleLogin } from '../components/Login';
 import RegisterForm, { setupRegisterForm } from '../components/RegisterForm';
+import logo from '../images/logo-big.svg';
 
 // Funkcja renderująca stronę logowania
 export default function LoginPage() {
   return `
-    <div id="auth-container">
-      <div id="login-section">
-        <h2>Logowanie</h2>
-        ${Login()}
-        <button id="switch-to-register">Zarejestruj się</button>
+    <div id="auth-container" class="auth-container">
+      <div id="login-section" class="login-section">
+        <div class="logo">
+          <img src="${logo}" alt="Kapu$ta Logo">
+        </div>
+        <div class="auth-form">
+          ${Login()}
+
+        </div>
       </div>
       <div id="register-section" style="display: none;">
         ${RegisterForm()}
-        <button id="switch-to-login">Powrót do logowania</button>
+        <button id="switch-to-login">Log in</button>
       </div>
     </div>
   `;

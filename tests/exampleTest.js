@@ -1,1 +1,1 @@
-// /tests/exampleTest.js
+// tests/exampleTest.js

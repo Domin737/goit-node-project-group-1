@@ -1,1 +1,1 @@
-// /src/redux/store.js
+// src/redux/store.js

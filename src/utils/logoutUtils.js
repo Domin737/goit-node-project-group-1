@@ -1,10 +1,9 @@
-// /src/utils/logoutUtils.js
-
+// src/utils/logoutUtils.js
 export async function handleLogout() {
   try {
     const token = localStorage.getItem('userToken');
     if (!token) {
-      throw new Error('Brak tokenu uwierzytelniającego');
+      throw new Error('No authentication token');
     }
 
     const response = await fetch('/api/users/logout', {
@@ -16,7 +15,7 @@ export async function handleLogout() {
     });
 
     if (!response.ok) {
-      throw new Error('Błąd podczas wylogowywania');
+      throw new Error('Error while logging out');
     }
 
     // Usunięcie tokena JWT z localStorage
@@ -29,7 +28,7 @@ export async function handleLogout() {
     // Przekierowanie na stronę logowania
     window.location.href = '/login';
   } catch (error) {
-    console.error('Błąd podczas wylogowywania:', error);
-    alert(`Wystąpił błąd podczas wylogowywania: ${error.message}`);
+    console.error('Error while logging out:', error);
+    alert(`An error occurred while logging out: ${error.message}`);
   }
 }

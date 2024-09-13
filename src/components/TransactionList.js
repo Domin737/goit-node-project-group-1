@@ -4,9 +4,9 @@ import Modal, { setupModal } from './Modal';
 
 export function TransactionList() {
   return `
-    <div id="transaction-list-container">
-      <h2>Lista transakcji</h2>
-      <ul id="transaction-list"></ul>
+    <div class="transaction-container">
+      <h3>List of transactions</h3>
+      <ul id="transaction-list" class="transaction-list"></ul>
     </div>
   `;
 }
@@ -24,8 +24,8 @@ export async function setupTransactionList(onTransactionDeleted) {
       const transactions = await response.json();
       renderTransactions(transactions);
     } catch (error) {
-      console.error('Błąd podczas pobierania transakcji:', error);
-      transactionList.innerHTML = '<li>Błąd podczas ładowania transakcji</li>';
+      console.error('Error downloading transaction:', error);
+      transactionList.innerHTML = '<li>Error loading transaction</li>';
     }
   }
 
@@ -34,10 +34,19 @@ export async function setupTransactionList(onTransactionDeleted) {
       .map(
         transaction => `
         <li data-id="${transaction._id}">
-          ${transaction.type === 'income' ? '📈' : '📉'}
-          ${transaction.category} - ${transaction.amount.toFixed(2)} EUR
-          (${transaction.description})
-          <button class="delete-transaction">Usuń</button>
+          <div class="transaction-info">
+            <span class="transaction-icon">${
+              transaction.type === 'income' ? '📈' : '📉'
+            }</span>
+            <div class="transaction-details">
+              <span class="category">${transaction.category}</span>
+              <span class="description">${transaction.description}</span>
+            </div>
+          </div>
+          <span class="transaction-amount ${
+            transaction.type
+          }">${transaction.amount.toFixed(2)} EUR</span>
+          <button class="delete-transaction btn-icon">🗑️</button>
         </li>
       `
       )
@@ -52,7 +61,7 @@ export async function setupTransactionList(onTransactionDeleted) {
       button.addEventListener('click', async e => {
         const transactionId = e.target.closest('li').dataset.id;
         showConfirmationModal(
-          'Czy na pewno chcesz usunąć transakcję?',
+          'Are you sure you want to delete the transaction?',
           async () => {
             try {
               const response = await fetch(
@@ -68,19 +77,19 @@ export async function setupTransactionList(onTransactionDeleted) {
               );
 
               if (!response.ok) {
-                throw new Error('Błąd podczas usuwania transakcji');
+                throw new Error('Error deleting transaction');
               }
 
               const result = await response.json();
               e.target.closest('li').remove();
-              alert('Transakcja usunięta pomyślnie');
+              alert('Transaction deleted successfully');
 
               if (onTransactionDeleted) {
                 onTransactionDeleted(result.newBalance);
               }
             } catch (error) {
-              console.error('Błąd podczas usuwania transakcji:', error);
-              alert('Wystąpił błąd podczas usuwania transakcji');
+              console.error('Error while deleting transaction:', error);
+              alert('An error occurred while deleting the transaction');
             }
           }
         );
@@ -95,7 +104,6 @@ export async function setupTransactionList(onTransactionDeleted) {
   };
 }
 
-// Funkcja pokazująca modal potwierdzający usunięcie transakcji
 function showConfirmationModal(message, confirmAction) {
   const confirmationModalContainer = document.getElementById(
     'confirmation-modal-container'
@@ -106,20 +114,20 @@ function showConfirmationModal(message, confirmAction) {
     cancelLabel: 'NO',
     confirmAction: () => {
       confirmAction();
-      confirmationModalContainer.innerHTML = ''; // Ukryj modal po potwierdzeniu
+      confirmationModalContainer.innerHTML = '';
     },
     cancelAction: () => {
-      confirmationModalContainer.innerHTML = ''; // Ukryj modal po anulowaniu
+      confirmationModalContainer.innerHTML = '';
     },
   });
 
   setupModal(
     () => {
       confirmAction();
-      confirmationModalContainer.innerHTML = ''; // Ukryj modal po potwierdzeniu
+      confirmationModalContainer.innerHTML = '';
     },
     () => {
-      confirmationModalContainer.innerHTML = ''; // Ukryj modal po anulowaniu
+      confirmationModalContainer.innerHTML = '';
     }
   );
 }

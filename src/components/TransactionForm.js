@@ -1,20 +1,32 @@
 // src/components/TransactionForm.js
 import { API_URL } from '../config';
+import { showModal } from './Modal';
 
 export function TransactionForm() {
   return `
-    <div id="transaction-form-container">
-      <h2>Dodaj transakcję</h2>
-      <form id="transaction-form">
-        <select id="transaction-type" required>
-          <option value="">Wybierz typ</option>
-          <option value="income">Przychód</option>
-          <option value="expense">Wydatek</option>
-        </select>
-        <input type="text" id="transaction-category" placeholder="Kategoria" required>
-        <input type="number" id="transaction-amount" placeholder="Kwota" step="0.01" required>
-        <input type="text" id="transaction-description" placeholder="Opis" required>
-        <button type="submit">Dodaj</button>
+    <div class="transaction-form-container">
+      <h3>Add transaction</h3>
+      <form id="transaction-form" class="transaction-form">
+        <div class="form-group">
+          <select id="transaction-type" required>
+            <option value="">Select type</option>
+            <option value="income">Income</option>
+            <option value="expense">Expense</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <input type="text" id="transaction-category" placeholder="Category" required>
+        </div>
+        <div class="form-group">
+          <input type="number" id="transaction-amount" placeholder="Sum" step="0.01" required>
+        </div>
+        <div class="form-group">
+          <input type="text" id="transaction-description" placeholder="Description" required>
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary">Add</button>
+          <button type="reset" class="btn btn-secondary">Clear</button>
+        </div>
       </form>
     </div>
   `;
@@ -46,19 +58,27 @@ export function setupTransactionForm(onTransactionAdded) {
       });
 
       if (!response.ok) {
-        throw new Error('Błąd podczas dodawania transakcji');
+        throw new Error('Error while adding transaction');
       }
 
       const result = await response.json();
-      alert('Transakcja dodana pomyślnie');
+      showModal({
+        message: 'Transaction added successfully',
+        confirmLabel: 'OK',
+        confirmAction: () => {},
+      });
       form.reset();
 
       if (onTransactionAdded) {
         onTransactionAdded(result.transaction, result.newBalance);
       }
     } catch (error) {
-      console.error('Błąd podczas dodawania transakcji:', error);
-      alert('Wystąpił błąd podczas dodawania transakcji');
+      console.error('Error while adding transaction:', error);
+      showModal({
+        message: 'An error occurred while adding the transaction.',
+        confirmLabel: 'OK',
+        confirmAction: () => {},
+      });
     }
   });
 }

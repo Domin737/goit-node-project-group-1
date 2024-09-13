@@ -9,11 +9,11 @@ const addTransaction = async (req, res) => {
     const user = req.user;
 
     if (!type || !category || !amount || !description) {
-      return res.status(400).json({ message: 'Wszystkie pola są wymagane' });
+      return res.status(400).json({ message: 'All fields are required' });
     }
 
     if (type !== 'income' && type !== 'expense') {
-      return res.status(400).json({ message: 'Nieprawidłowy typ transakcji' });
+      return res.status(400).json({ message: 'Invalid transaction type' });
     }
 
     const transaction = await Transaction.create({
@@ -37,7 +37,7 @@ const addTransaction = async (req, res) => {
       newBalance: user.balance,
     });
   } catch (error) {
-    res.status(500).json({ message: 'Błąd serwera', error: error.message });
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
@@ -50,7 +50,7 @@ const deleteTransaction = async (req, res) => {
     const transaction = await Transaction.findOne({ _id: id, user: user._id });
 
     if (!transaction) {
-      return res.status(404).json({ message: 'Transakcja nie znaleziona' });
+      return res.status(404).json({ message: 'Transaction not found' });
     }
 
     // Aktualizacja bilansu użytkownika
@@ -64,11 +64,11 @@ const deleteTransaction = async (req, res) => {
     await transaction.deleteOne();
 
     res.json({
-      message: 'Transakcja usunięta',
+      message: 'Transaction deleted',
       newBalance: user.balance,
     });
   } catch (error) {
-    res.status(500).json({ message: 'Błąd serwera', error: error.message });
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
@@ -81,7 +81,7 @@ const getTransactions = async (req, res) => {
     });
     res.json(transactions);
   } catch (error) {
-    res.status(500).json({ message: 'Błąd serwera', error: error.message });
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 

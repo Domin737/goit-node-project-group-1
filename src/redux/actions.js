@@ -1,1 +1,1 @@
-// /src/redux/actions.js
+// src/redux/actions.js

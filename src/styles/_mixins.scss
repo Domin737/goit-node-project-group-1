@@ -1,1 +1,59 @@
-// /src/styles/_mixins.scss
+// src/styles/_mixins.scss
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@mixin button-reset {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline: inherit;
+}
+
+@mixin mobile {
+  @media (max-width: #{$mobile-breakpoint - 1px}) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (min-width: #{$mobile-breakpoint}) and (max-width: #{$desktop-breakpoint - 1px}) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: #{$desktop-breakpoint}) {
+    @content;
+  }
+}
+
+@mixin input-style {
+  width: 100%;
+  padding: $spacing-medium;
+  border: 1px solid $dark-gray;
+  border-radius: $border-radius-small;
+  font-size: $font-size-base;
+  outline: none;
+  transition: border-color $transition-speed;
+
+  &:focus {
+    border-color: $primary-color;
+  }
+}
+
+@mixin card {
+  background-color: $white;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  padding: $spacing-large;
+}
