@@ -24,7 +24,6 @@ export default function HomePage() {
         ${LogoutButton()}
       </header>
       <main class="main-content">
-        <h1 class="visually-hidden">Kapu$ta - Strona główna</h1>
         ${Balance()}
         <div class="transactions-container">
           ${TransactionForm()}

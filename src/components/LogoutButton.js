@@ -1,7 +1,7 @@
 // src/components/LogoutButton.js
 export default function LogoutButton() {
   return `
-    <button id="logout-btn">Log out</button>
+    <button id="logout-btn" class="btn btn-secondary">Log out</button>
   `;
 }
 
