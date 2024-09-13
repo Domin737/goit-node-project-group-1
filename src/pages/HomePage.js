@@ -12,13 +12,14 @@ import {
 } from '../components/TransactionList';
 import { showModal } from '../components/Modal';
 import { API_URL } from '../config';
+import logo from '../images/logo-small.svg';
 
 export default function HomePage() {
   return `
-    <div class="container">
+      <div class="container">
       <header class="header">
         <div class="logo">
-          <img src="../images/logo-small.png" alt="Kapu$ta Logo">
+          <img src="${logo}" alt="Kapu$ta Logo">
         </div>
         ${LogoutButton()}
       </header>

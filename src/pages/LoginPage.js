@@ -1,6 +1,7 @@
 // src/pages/LoginPage.js
 import Login, { handleLogin } from '../components/Login';
 import RegisterForm, { setupRegisterForm } from '../components/RegisterForm';
+import logo from '../images/logo-small.svg';
 
 // Funkcja renderująca stronę logowania
 export default function LoginPage() {
@@ -8,7 +9,7 @@ export default function LoginPage() {
     <div id="auth-container">
       <div id="login-section">
         <div class="logo">
-          <img src="../images/logo-small.png" alt="Kapu$ta Logo">
+          <img src="${logo}" alt="Kapu$ta Logo">
         </div>
         <h2>Kapu$ta</h2>
         ${Login()}
