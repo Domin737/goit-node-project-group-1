@@ -6,6 +6,8 @@
   @include flex-center;
   min-height: 100vh;
   background-color: $background-color;
+  display: flex;
+  justify-content: center;
 }
 
 .auth-form {

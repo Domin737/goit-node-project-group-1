@@ -7,13 +7,13 @@ import logo from '../images/logo-big.svg';
 export default function LoginPage() {
   return `
     <div id="auth-container" class="auth-container">
-      <div id="login-section">
+      <div id="login-section" class="login-section">
         <div class="logo">
           <img src="${logo}" alt="Kapu$ta Logo">
         </div>
         <div class="auth-form">
           ${Login()}
-          <button id="switch-to-register">Registration</button>
+
         </div>
       </div>
       <div id="register-section" style="display: none;">

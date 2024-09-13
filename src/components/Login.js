@@ -49,7 +49,8 @@ export default function Login() {
       <label for="password">Password:</label>
       <input type="password" id="password" required />
       
-      <button type="submit">Log in</button>
+      <button type="submit" class="btn btn-primary">Log in</button>
+      <button id="switch-to-register" class="btn btn-secondary">Registration</button>
     </form>
   `;
 }
