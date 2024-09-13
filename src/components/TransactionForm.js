@@ -1,6 +1,7 @@
 // src/components/TransactionForm.js
 import { API_URL } from '../config';
 import { showModal } from './Modal';
+import { checkAndShowZeroBalanceModal } from './Balance';
 
 export function TransactionForm() {
   return `
@@ -72,6 +73,9 @@ export function setupTransactionForm(onTransactionAdded) {
       if (onTransactionAdded) {
         onTransactionAdded(result.transaction, result.newBalance);
       }
+
+      // Sprawdź, czy nowy balans wynosi 0 i pokaż odpowiedni modal
+      await checkAndShowZeroBalanceModal();
     } catch (error) {
       console.error('Error while adding transaction:', error);
       showModal({

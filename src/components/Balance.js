@@ -1,39 +1,17 @@
 // src/components/Balance.js
 import { API_URL } from '../config';
-import Modal, { setupModal } from './Modal';
+import { showModal } from './Modal';
 
 function showConfirmationModal(message, confirmAction) {
-  const confirmationModalContainer = document.getElementById(
-    'confirmation-modal-container'
-  );
-
-  if (!confirmationModalContainer) {
-    console.error('Element confirmation-modal-container nie istnieje.');
-    return;
-  }
-
-  confirmationModalContainer.innerHTML = Modal({
+  showModal({
     message,
     confirmLabel: 'YES',
     cancelLabel: 'NO',
     confirmAction: () => {
       confirmAction();
-      confirmationModalContainer.innerHTML = '';
     },
-    cancelAction: () => {
-      confirmationModalContainer.innerHTML = '';
-    },
+    cancelAction: () => {},
   });
-
-  setupModal(
-    () => {
-      confirmAction();
-      confirmationModalContainer.innerHTML = '';
-    },
-    () => {
-      confirmationModalContainer.innerHTML = '';
-    }
-  );
 }
 
 export function Balance() {
@@ -51,6 +29,28 @@ export function Balance() {
   `;
 }
 
+export async function fetchBalance() {
+  const balanceAmount = document.getElementById('balance-amount');
+  try {
+    const response = await fetch(`${API_URL}/users/balance`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('userToken')}`,
+      },
+    });
+    const data = await response.json();
+    if (balanceAmount) {
+      balanceAmount.textContent = `${data.balance.toFixed(2)} EUR`;
+    }
+    return data.balance;
+  } catch (error) {
+    console.error('Error while retrieving balance:', error);
+    if (balanceAmount) {
+      balanceAmount.textContent = 'Error while loading balance';
+    }
+    return null;
+  }
+}
+
 export async function setupBalance() {
   const balanceAmount = document.getElementById('balance-amount');
   const updateBalanceBtn = document.getElementById('update-balance-btn');
@@ -59,21 +59,6 @@ export async function setupBalance() {
   if (!balanceAmount || !updateBalanceBtn || !showReportsBtn) {
     console.error('Elementy DOM potrzebne do działania nie istnieją.');
     return;
-  }
-
-  async function fetchBalance() {
-    try {
-      const response = await fetch(`${API_URL}/users/balance`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('userToken')}`,
-        },
-      });
-      const data = await response.json();
-      balanceAmount.textContent = `${data.balance.toFixed(2)} EUR`;
-    } catch (error) {
-      console.error('Error while retrieving balance:', error);
-      balanceAmount.textContent = 'Error while loading balance';
-    }
   }
 
   async function updateBalance(newBalance) {
@@ -94,7 +79,11 @@ export async function setupBalance() {
       }
     } catch (error) {
       console.error('Error updating balance:', error);
-      alert('An error occurred while updating the balance sheet');
+      showModal({
+        message: 'An error occurred while updating the balance sheet',
+        confirmLabel: 'OK',
+        confirmAction: () => {},
+      });
     }
   }
 
@@ -151,26 +140,28 @@ export async function setupBalance() {
   };
 }
 
-function showZeroBalanceModal() {
-  const zeroBalanceModalContainer = document.getElementById(
-    'zero-balance-modal-container'
-  );
+let zeroBalanceModalShown = false;
 
-  if (!zeroBalanceModalContainer) {
-    console.error('Element zero-balance-modal-container nie istnieje.');
+export function showZeroBalanceModal() {
+  if (zeroBalanceModalShown) {
     return;
   }
 
-  zeroBalanceModalContainer.innerHTML = Modal({
+  showModal({
     message:
       "Hello! To get started, enter the current balance of your account! You can't spend money until you have it :)",
     confirmLabel: 'OK',
     confirmAction: () => {
-      zeroBalanceModalContainer.innerHTML = '';
+      zeroBalanceModalShown = false;
     },
   });
 
-  setupModal(() => {
-    zeroBalanceModalContainer.innerHTML = '';
-  });
+  zeroBalanceModalShown = true;
+}
+
+export async function checkAndShowZeroBalanceModal() {
+  const balance = await fetchBalance();
+  if (balance === 0) {
+    showZeroBalanceModal();
+  }
 }
