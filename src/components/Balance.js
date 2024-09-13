@@ -6,6 +6,12 @@ function showConfirmationModal(message, confirmAction) {
   const confirmationModalContainer = document.getElementById(
     'confirmation-modal-container'
   );
+
+  if (!confirmationModalContainer) {
+    console.error('Element confirmation-modal-container nie istnieje.');
+    return;
+  }
+
   confirmationModalContainer.innerHTML = Modal({
     message,
     confirmLabel: 'YES',
@@ -33,13 +39,15 @@ function showConfirmationModal(message, confirmAction) {
 export function Balance() {
   return `
     <div class="balance-container">
-      <h2>Twój bilans</h2>
-      <p id="balance-amount" class="balance-amount">Landing...</p>
+      <h2>BALANCE</h2>
+      <p id="balance-amount" class="balance-amount">Loading...</p>
       <div class="balance-actions">
         <button id="update-balance-btn" class="btn btn-primary">Update balance sheet</button>
         <button id="show-reports-btn" class="btn btn-secondary">Go to reports</button>
       </div>
     </div>
+    <div id="confirmation-modal-container"></div>
+    <div id="zero-balance-modal-container"></div>
   `;
 }
 
@@ -47,6 +55,11 @@ export async function setupBalance() {
   const balanceAmount = document.getElementById('balance-amount');
   const updateBalanceBtn = document.getElementById('update-balance-btn');
   const showReportsBtn = document.getElementById('show-reports-btn');
+
+  if (!balanceAmount || !updateBalanceBtn || !showReportsBtn) {
+    console.error('Elementy DOM potrzebne do działania nie istnieją.');
+    return;
+  }
 
   async function fetchBalance() {
     try {
@@ -93,8 +106,8 @@ export async function setupBalance() {
           <input type="number" id="new-balance" step="0.01" required>
         </div>
         <div class="btn-group">
-          <button id="confirm-balance" class="btn btn-primary">Potwierdź</button>
-          <button id="cancel-balance" class="btn btn-secondary">Anuluj</button>
+          <button id="confirm-balance" class="btn btn-primary">Confirm</button>
+          <button id="cancel-balance" class="btn btn-secondary">Cancel</button>
         </div>
       </div>
     `;
@@ -127,7 +140,6 @@ export async function setupBalance() {
   });
 
   showReportsBtn.addEventListener('click', () => {
-    // Tutaj dodaj logikę przejścia do strony raportów
     console.log('Go to reports');
   });
 
@@ -143,6 +155,12 @@ function showZeroBalanceModal() {
   const zeroBalanceModalContainer = document.getElementById(
     'zero-balance-modal-container'
   );
+
+  if (!zeroBalanceModalContainer) {
+    console.error('Element zero-balance-modal-container nie istnieje.');
+    return;
+  }
+
   zeroBalanceModalContainer.innerHTML = Modal({
     message:
       "Hello! To get started, enter the current balance of your account! You can't spend money until you have it :)",
