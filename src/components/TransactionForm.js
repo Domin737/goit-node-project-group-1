@@ -1,9 +1,10 @@
 // src/components/TransactionForm.js
 import { API_URL } from '../config';
-import { showModal } from './Modal';
+import { showModal, closeModal } from './Modal';
 import { checkAndShowZeroBalanceModal } from './Balance';
 
 export function TransactionForm() {
+  console.log('Renderowanie formularza transakcji');
   return `
     <div class="transaction-form-container">
       <h3>Add transaction</h3>
@@ -34,6 +35,7 @@ export function TransactionForm() {
 }
 
 export function setupTransactionForm(onTransactionAdded) {
+  console.log('Inicjalizacja formularza transakcji');
   const form = document.getElementById('transaction-form');
 
   form.addEventListener('submit', async e => {
@@ -48,6 +50,13 @@ export function setupTransactionForm(onTransactionAdded) {
       'transaction-description'
     ).value;
 
+    console.log('Dodawanie nowej transakcji:', {
+      type,
+      category,
+      amount,
+      description,
+    });
+
     try {
       const response = await fetch(`${API_URL}/transactions`, {
         method: 'POST',
@@ -59,25 +68,28 @@ export function setupTransactionForm(onTransactionAdded) {
       });
 
       if (!response.ok) {
-        throw new Error('Error while adding transaction');
+        throw new Error('Błąd podczas dodawania transakcji');
       }
 
       const result = await response.json();
+      console.log('Transakcja dodana pomyślnie:', result);
       showModal({
         message: 'Transaction added successfully',
         confirmLabel: 'OK',
-        confirmAction: () => {},
+        confirmAction: async () => {
+          closeModal();
+          form.reset();
+
+          if (onTransactionAdded) {
+            await onTransactionAdded(result.transaction, result.newBalance);
+          }
+
+          // Sprawdź, czy nowy balans wynosi 0 i pokaż odpowiedni modal
+          await checkAndShowZeroBalanceModal();
+        },
       });
-      form.reset();
-
-      if (onTransactionAdded) {
-        onTransactionAdded(result.transaction, result.newBalance);
-      }
-
-      // Sprawdź, czy nowy balans wynosi 0 i pokaż odpowiedni modal
-      await checkAndShowZeroBalanceModal();
     } catch (error) {
-      console.error('Error while adding transaction:', error);
+      console.error('Błąd podczas dodawania transakcji:', error);
       showModal({
         message: 'An error occurred while adding the transaction.',
         confirmLabel: 'OK',

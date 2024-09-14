@@ -6,6 +6,7 @@ export default function Modal({
   cancelAction = null,
   cancelLabel = 'NO',
 }) {
+  console.log('Tworzenie modala z wiadomością:', message);
   return `
     <div class="modal-overlay">
       <div class="modal">
@@ -31,15 +32,20 @@ export function setupModal(confirmAction, cancelAction = null) {
   const closeBtn = document.getElementById('modal-close-btn');
 
   confirmBtn.addEventListener('click', () => {
+    console.log('Kliknięto przycisk potwierdzenia w modalu');
     confirmAction();
     closeModal();
   });
 
-  closeBtn.addEventListener('click', closeModal);
+  closeBtn.addEventListener('click', () => {
+    console.log('Kliknięto przycisk zamknięcia modala');
+    closeModal();
+  });
 
   if (cancelAction) {
     const cancelBtn = document.getElementById('modal-cancel-btn');
     cancelBtn.addEventListener('click', () => {
+      console.log('Kliknięto przycisk anulowania w modalu');
       cancelAction();
       closeModal();
     });
@@ -48,7 +54,8 @@ export function setupModal(confirmAction, cancelAction = null) {
   setupOutsideClickModal();
 }
 
-function closeModal() {
+export function closeModal() {
+  console.log('Zamykanie modala');
   const modalOverlay = document.querySelector('.modal-overlay');
   if (modalOverlay) {
     modalOverlay.remove();
@@ -59,12 +66,14 @@ function setupOutsideClickModal() {
   const modalOverlay = document.querySelector('.modal-overlay');
   modalOverlay.addEventListener('click', event => {
     if (event.target === modalOverlay) {
+      console.log('Kliknięto poza modalem, zamykanie modala');
       closeModal();
     }
   });
 }
 
 export function showModal(options) {
+  console.log('Pokazanie modala z opcjami:', options);
   const modalContainer = document.createElement('div');
   modalContainer.innerHTML = Modal(options);
   document.body.appendChild(modalContainer.firstElementChild);

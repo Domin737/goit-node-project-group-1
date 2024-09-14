@@ -5,6 +5,7 @@ import logo from '../images/logo-big.svg';
 
 // Funkcja renderująca stronę logowania
 export default function LoginPage() {
+  console.log('Renderowanie strony logowania');
   return `
     <div id="auth-container" class="auth-container">
       <div id="login-section" class="login-section">
@@ -13,7 +14,6 @@ export default function LoginPage() {
         </div>
         <div class="auth-form">
           ${Login()}
-
         </div>
       </div>
       <div id="register-section" style="display: none;">
@@ -32,20 +32,23 @@ export function setupAuthForms() {
   const loginSection = document.getElementById('login-section');
   const registerSection = document.getElementById('register-section');
 
+  console.log('Inicjalizacja formularzy autoryzacji');
   loginForm.addEventListener('submit', handleLogin);
 
   switchToRegisterBtn.addEventListener('click', () => {
+    console.log('Przełączanie na formularz rejestracji');
     loginSection.style.display = 'none';
     registerSection.style.display = 'block';
   });
 
   switchToLoginBtn.addEventListener('click', () => {
+    console.log('Przełączanie na formularz logowania');
     registerSection.style.display = 'none';
     loginSection.style.display = 'block';
   });
 
   setupRegisterForm(() => {
-    // Po udanej rejestracji przełącz z powrotem na formularz logowania
+    console.log('Rejestracja zakończona pomyślnie, powrót do logowania');
     registerSection.style.display = 'none';
     loginSection.style.display = 'block';
   });

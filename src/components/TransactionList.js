@@ -3,6 +3,7 @@ import { API_URL } from '../config';
 import Modal, { setupModal } from './Modal';
 
 export function TransactionList() {
+  console.log('Renderowanie listy transakcji');
   return `
     <div class="transaction-container">
       <h3>List of transactions</h3>
@@ -15,6 +16,7 @@ export async function setupTransactionList(onTransactionDeleted) {
   const transactionList = document.getElementById('transaction-list');
 
   async function fetchTransactions() {
+    console.log('Pobieranie listy transakcji');
     try {
       const response = await fetch(`${API_URL}/transactions`, {
         headers: {
@@ -22,14 +24,16 @@ export async function setupTransactionList(onTransactionDeleted) {
         },
       });
       const transactions = await response.json();
+      console.log('Pobrano transakcje:', transactions);
       renderTransactions(transactions);
     } catch (error) {
-      console.error('Error downloading transaction:', error);
-      transactionList.innerHTML = '<li>Error loading transaction</li>';
+      console.error('Błąd pobierania transakcji:', error);
+      transactionList.innerHTML = '<li>Error loading transactions</li>';
     }
   }
 
   function renderTransactions(transactions) {
+    console.log('Renderowanie transakcji');
     transactionList.innerHTML = transactions
       .map(
         transaction => `
@@ -60,6 +64,7 @@ export async function setupTransactionList(onTransactionDeleted) {
     deleteButtons.forEach(button => {
       button.addEventListener('click', async e => {
         const transactionId = e.target.closest('li').dataset.id;
+        console.log('Próba usunięcia transakcji o ID:', transactionId);
         showConfirmationModal(
           'Are you sure you want to delete the transaction?',
           async () => {
@@ -77,18 +82,19 @@ export async function setupTransactionList(onTransactionDeleted) {
               );
 
               if (!response.ok) {
-                throw new Error('Error deleting transaction');
+                throw new Error('Błąd podczas usuwania transakcji');
               }
 
               const result = await response.json();
               e.target.closest('li').remove();
+              console.log('Transakcja usunięta pomyślnie');
               alert('Transaction deleted successfully');
 
               if (onTransactionDeleted) {
                 onTransactionDeleted(result.newBalance);
               }
             } catch (error) {
-              console.error('Error while deleting transaction:', error);
+              console.error('Błąd podczas usuwania transakcji:', error);
               alert('An error occurred while deleting the transaction');
             }
           }
@@ -108,6 +114,7 @@ function showConfirmationModal(message, confirmAction) {
   const confirmationModalContainer = document.getElementById(
     'confirmation-modal-container'
   );
+  console.log('Pokazanie modala potwierdzającego z wiadomością:', message);
   confirmationModalContainer.innerHTML = Modal({
     message,
     confirmLabel: 'YES',
