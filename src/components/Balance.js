@@ -32,8 +32,8 @@ export function Balance() {
       <h2>BALANCE</h2>
       <p id="balance-amount" class="balance-amount">Loading...</p>
       <div class="balance-actions">
-        <button id="update-balance-btn" class="btn btn-primary">Update balance sheet</button>
-        <button id="show-reports-btn" class="btn btn-secondary">Go to reports</button>
+        <button id="update-balance-btn" class="btn btn-primary">Input</button>
+        <button id="show-reports-btn" class="btn btn-secondary">Reports</button>
       </div>
     </div>
     <div id="confirmation-modal-container"></div>
