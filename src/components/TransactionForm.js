@@ -4,7 +4,7 @@ import { showModal, closeModal } from './Modal';
 import { checkAndShowZeroBalanceModal } from './Balance';
 
 export function TransactionForm() {
-  console.log('Renderowanie formularza transakcji');
+  console.log('function TransactionForm - Rendering transaction form');
   return `
     <div class="transaction-form-container">
       <h3>Add transaction</h3>
@@ -17,10 +17,32 @@ export function TransactionForm() {
           </select>
         </div>
         <div class="form-group">
-          <input type="text" id="transaction-category" placeholder="Category" required>
+          <input type="date" id="transaction-date" required>
         </div>
         <div class="form-group">
-          <input type="number" id="transaction-amount" placeholder="Sum" step="0.01" required>
+          <select id="transaction-category" required>
+            <option value="">Select category</option>
+            <optgroup label="Expenses">
+              <option value="transport">Transport</option>
+              <option value="products">Products</option>
+              <option value="health">Health</option>
+              <option value="alcohol">Alcohol</option>
+              <option value="entertainment">Entertainment</option>
+              <option value="housing">Housing</option>
+              <option value="technique">Technique</option>
+              <option value="communication">Communication</option>
+              <option value="sports">Sports, hobbies</option>
+              <option value="education">Education</option>
+              <option value="other">Other</option>
+            </optgroup>
+            <optgroup label="Income">
+              <option value="salary">Salary</option>
+              <option value="additional_income">Additional income</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="form-group">
+          <input type="number" id="transaction-amount" placeholder="Amount" step="0.01" required>
         </div>
         <div class="form-group">
           <input type="text" id="transaction-description" placeholder="Description" required>
@@ -34,14 +56,24 @@ export function TransactionForm() {
   `;
 }
 
+// Funkcja do zmiany formatu daty na dd.mm.rrrr
+function formatDateToDDMMYYYY(dateString) {
+  const date = new Date(dateString);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Miesiące są indeksowane od 0
+  const year = date.getFullYear();
+  return `${day}.${month}.${year}`;
+}
+
 export function setupTransactionForm(onTransactionAdded) {
-  console.log('Inicjalizacja formularza transakcji');
+  console.log('function setupTransactionForm - Initializing transaction form');
   const form = document.getElementById('transaction-form');
 
   form.addEventListener('submit', async e => {
     e.preventDefault();
 
     const type = document.getElementById('transaction-type').value;
+    let date = document.getElementById('transaction-date').value;
     const category = document.getElementById('transaction-category').value;
     const amount = parseFloat(
       document.getElementById('transaction-amount').value
@@ -50,8 +82,12 @@ export function setupTransactionForm(onTransactionAdded) {
       'transaction-description'
     ).value;
 
-    console.log('Dodawanie nowej transakcji:', {
+    // Przekształcenie daty na format dd.mm.rrrr
+    date = formatDateToDDMMYYYY(date);
+
+    console.log('function setupTransactionForm - Adding new transaction:', {
       type,
+      date,
       category,
       amount,
       description,
@@ -64,15 +100,18 @@ export function setupTransactionForm(onTransactionAdded) {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('userToken')}`,
         },
-        body: JSON.stringify({ type, category, amount, description }),
+        body: JSON.stringify({ type, date, category, amount, description }),
       });
 
       if (!response.ok) {
-        throw new Error('Błąd podczas dodawania transakcji');
+        throw new Error('Error while adding transaction');
       }
 
       const result = await response.json();
-      console.log('Transakcja dodana pomyślnie:', result);
+      console.log(
+        'function setupTransactionForm - Transaction added successfully:',
+        result
+      );
       showModal({
         message: 'Transaction added successfully',
         confirmLabel: 'OK',
@@ -84,12 +123,15 @@ export function setupTransactionForm(onTransactionAdded) {
             await onTransactionAdded(result.transaction, result.newBalance);
           }
 
-          // Sprawdź, czy nowy balans wynosi 0 i pokaż odpowiedni modal
+          // Check if new balance is 0 and show appropriate modal
           await checkAndShowZeroBalanceModal();
         },
       });
     } catch (error) {
-      console.error('Błąd podczas dodawania transakcji:', error);
+      console.error(
+        'function setupTransactionForm - Error while adding transaction:',
+        error
+      );
       showModal({
         message: 'An error occurred while adding the transaction.',
         confirmLabel: 'OK',

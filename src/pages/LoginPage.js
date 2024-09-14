@@ -5,7 +5,7 @@ import logo from '../images/logo-big.svg';
 
 // Funkcja renderująca stronę logowania
 export default function LoginPage() {
-  console.log('Renderowanie strony logowania');
+  console.log('function LoginPage - Rendering the login page');
   return `
     <div id="auth-container" class="auth-container">
       <div id="login-section" class="login-section">
@@ -32,23 +32,27 @@ export function setupAuthForms() {
   const loginSection = document.getElementById('login-section');
   const registerSection = document.getElementById('register-section');
 
-  console.log('Inicjalizacja formularzy autoryzacji');
+  console.log(
+    'function setupAuthForms - Initialization of authorization forms'
+  );
   loginForm.addEventListener('submit', handleLogin);
 
   switchToRegisterBtn.addEventListener('click', () => {
-    console.log('Przełączanie na formularz rejestracji');
+    console.log('function setupAuthForms - Switching to the registration form');
     loginSection.style.display = 'none';
     registerSection.style.display = 'block';
   });
 
   switchToLoginBtn.addEventListener('click', () => {
-    console.log('Przełączanie na formularz logowania');
+    console.log('function setupAuthForms - Switching to login form');
     registerSection.style.display = 'none';
     loginSection.style.display = 'block';
   });
 
   setupRegisterForm(() => {
-    console.log('Rejestracja zakończona pomyślnie, powrót do logowania');
+    console.log(
+      'function setupAuthForms - Registration completed successfully, back to login'
+    );
     registerSection.style.display = 'none';
     loginSection.style.display = 'block';
   });

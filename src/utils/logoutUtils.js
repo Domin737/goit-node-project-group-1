@@ -28,7 +28,7 @@ export async function handleLogout() {
     // Przekierowanie na stronę logowania
     window.location.href = '/login';
   } catch (error) {
-    console.error('Error while logging out:', error);
+    console.error('function handleLogout - Error while logging out:', error);
     alert(`An error occurred while logging out: ${error.message}`);
   }
 }

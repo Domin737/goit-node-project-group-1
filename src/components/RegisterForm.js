@@ -1,6 +1,6 @@
 // src/components/RegisterForm.js
 export default function RegisterForm() {
-  console.log('Renderowanie formularza rejestracji');
+  console.log('function RegisterForm - Rendering of registration form');
   return `
     <form id="register-form">
       <h2>Registration</h2>
@@ -23,7 +23,9 @@ export default function RegisterForm() {
 
 export function setupRegisterForm(onRegisterSuccess) {
   const form = document.getElementById('register-form');
-  console.log('Inicjalizacja formularza rejestracji');
+  console.log(
+    'function setupRegisterForm - Initializing the registration form'
+  );
 
   form.addEventListener('submit', async e => {
     e.preventDefault();
@@ -31,7 +33,10 @@ export function setupRegisterForm(onRegisterSuccess) {
     const userData = Object.fromEntries(formData.entries());
 
     try {
-      console.log('Próba rejestracji użytkownika:', userData.email);
+      console.log(
+        'function setupRegisterForm - User registration attempt:',
+        userData.email
+      );
       const response = await fetch('/api/users/register', {
         method: 'POST',
         headers: {
@@ -41,16 +46,24 @@ export function setupRegisterForm(onRegisterSuccess) {
       });
 
       if (response.ok) {
-        console.log('Rejestracja zakończona pomyślnie');
+        console.log(
+          'function setupRegisterForm - Registration completed successfully'
+        );
         alert('Registration successful! You can now log in.');
         onRegisterSuccess();
       } else {
         const errorData = await response.json();
-        console.error('Błąd rejestracji:', errorData.message);
+        console.error(
+          'function setupRegisterForm - Registration error:',
+          errorData.message
+        );
         alert(`Registration error: ${errorData.message}`);
       }
     } catch (error) {
-      console.error('Błąd podczas rejestracji:', error);
+      console.error(
+        'function setupRegisterForm - Error during registration:',
+        error
+      );
       alert('An error occurred while registering. Please try again later.');
     }
   });

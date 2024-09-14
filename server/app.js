@@ -33,11 +33,13 @@ app.get('*', (req, res) => {
 // Middleware do obsługi błędów
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ message: err.message || 'A server error occurred' });
+  res
+    .status(500)
+    .json({ message: err.message || 'Middleware - A server error occurred' });
 });
 
 // Konfiguracja portu
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`The server is running on the port: ${PORT}`);
+  console.log(`Port - The server is running on the port: ${PORT}`);
 });

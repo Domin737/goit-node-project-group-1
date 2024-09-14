@@ -1,6 +1,6 @@
 // src/components/LogoutButton.js
 export default function LogoutButton() {
-  console.log('Renderowanie przycisku wylogowania');
+  console.log('function LogoutButton - Rendering the logout button');
   return `
     <button id="logout-btn" class="btn btn-secondary">Log out</button>
   `;
@@ -9,7 +9,7 @@ export default function LogoutButton() {
 export function setupLogoutButton(onLogoutClick) {
   const logoutBtn = document.getElementById('logout-btn');
   if (logoutBtn) {
-    console.log('Inicjalizacja przycisku wylogowania');
+    console.log('function setupLogoutButton - Initializing the logout button');
     logoutBtn.addEventListener('click', onLogoutClick);
   }
 }

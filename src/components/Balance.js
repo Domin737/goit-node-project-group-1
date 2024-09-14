@@ -3,23 +3,30 @@ import { API_URL } from '../config';
 import { showModal, closeModal } from './Modal';
 
 function showConfirmationModal(message, confirmAction) {
-  console.log('Pokazanie modala potwierdzającego z wiadomością:', message);
+  console.log(
+    'function showConfirmationModal - Showing confirmation modal with message:',
+    message
+  );
   showModal({
     message,
     confirmLabel: 'YES',
     cancelLabel: 'NO',
     confirmAction: () => {
-      console.log('Potwierdzono akcję');
+      console.log(
+        'function showConfirmationModal [showModal] - Action confirmed'
+      );
       confirmAction();
     },
     cancelAction: () => {
-      console.log('Anulowano akcję');
+      console.log(
+        'function showConfirmationModal [showModal] - Action canceled'
+      );
     },
   });
 }
 
 export function Balance() {
-  console.log('Renderowanie komponentu Balance');
+  console.log('function Balance - Rendering the Balance component');
   return `
     <div class="balance-container">
       <h2>BALANCE</h2>
@@ -35,7 +42,7 @@ export function Balance() {
 }
 
 export async function fetchBalance() {
-  console.log('Rozpoczęto pobieranie balansu');
+  console.log('function fetchBalance - Balance download started');
   const balanceAmount = document.getElementById('balance-amount');
   try {
     const response = await fetch(`${API_URL}/users/balance`, {
@@ -44,13 +51,16 @@ export async function fetchBalance() {
       },
     });
     const data = await response.json();
-    console.log('Pobrano dane balansu:', data);
+    console.log('function fetchBalance - Balance data downloaded:', data);
     if (balanceAmount) {
       balanceAmount.textContent = `${data.balance.toFixed(2)} EUR`;
     }
     return data.balance;
   } catch (error) {
-    console.error('Błąd podczas pobierania balansu:', error);
+    console.error(
+      'function fetchBalance - Error while downloading balance:',
+      error
+    );
     if (balanceAmount) {
       balanceAmount.textContent = 'Error while loading balance';
     }
@@ -59,18 +69,20 @@ export async function fetchBalance() {
 }
 
 export async function setupBalance() {
-  console.log('Inicjalizacja Balance');
+  console.log('function setupBalance - Balance Initialization');
   const balanceAmount = document.getElementById('balance-amount');
   const updateBalanceBtn = document.getElementById('update-balance-btn');
   const showReportsBtn = document.getElementById('show-reports-btn');
 
   if (!balanceAmount || !updateBalanceBtn || !showReportsBtn) {
-    console.error('Elementy DOM potrzebne do działania nie istnieją.');
+    console.error(
+      'function setupBalance - The DOM elements needed for operation do not exist'
+    );
     return;
   }
 
   async function updateBalance(newBalance) {
-    console.log('Aktualizacja balansu:', newBalance);
+    console.log('function updateBalance - Balance update:', newBalance);
     try {
       const response = await fetch(`${API_URL}/users/balance`, {
         method: 'PUT',
@@ -81,17 +93,23 @@ export async function setupBalance() {
         body: JSON.stringify({ balance: parseFloat(newBalance) }),
       });
       const data = await response.json();
-      console.log('Zaktualizowano balans:', data);
+      console.log('function updateBalance - Balance updated:', data);
       balanceAmount.textContent = `${data.balance.toFixed(2)} EUR`;
 
       if (data.balance === 0) {
-        console.log('Pokazanie modala, ponieważ balans wynosi 0');
+        console.log(
+          'function updateBalance - Showing modal because balance is 0'
+        );
         showZeroBalanceModal();
       }
     } catch (error) {
-      console.error('Błąd podczas aktualizacji balansu:', error);
+      console.error(
+        'function updateBalance - Error while updating balance:',
+        error
+      );
       showModal({
-        message: 'An error occurred while updating the balance sheet',
+        message:
+          'function updateBalance - An error occurred while updating the balance sheet',
         confirmLabel: 'OK',
         confirmAction: () => {},
       });
@@ -99,7 +117,7 @@ export async function setupBalance() {
   }
 
   updateBalanceBtn.addEventListener('click', () => {
-    console.log('Kliknięto przycisk aktualizacji bilansu');
+    console.log('updateBalanceBtn - Update balance button clicked');
     const balanceForm = `
       <div class="balance-form">
         <div class="form-group">
@@ -123,7 +141,7 @@ export async function setupBalance() {
     confirmBalanceBtn.addEventListener('click', async () => {
       const newBalance = newBalanceInput.value;
       if (newBalance) {
-        console.log('Potwierdzono nowy balans:', newBalance);
+        console.log('confirmBalanceBtn - New balance confirmed:', newBalance);
         showConfirmationModal(
           'Are you sure you want to update your balance?',
           async () => {
@@ -137,13 +155,13 @@ export async function setupBalance() {
     });
 
     cancelBalanceBtn.addEventListener('click', () => {
-      console.log('Anulowano aktualizację balansu');
+      console.log('cancelBalanceBtn - Balance update canceled');
       balanceContainer.removeChild(document.querySelector('.balance-form'));
     });
   });
 
   showReportsBtn.addEventListener('click', () => {
-    console.log('Przejście do raportów');
+    console.log('showReportsBtn - Go to reports');
   });
 
   await fetchBalance();
@@ -161,7 +179,7 @@ export function showZeroBalanceModal() {
     return;
   }
 
-  console.log('Pokazanie modala dla zerowego balansu');
+  console.log('function showZeroBalanceModal - Showing modal for zero balance');
   showModal({
     message:
       "Hello! To get started, enter the current balance of your account! You can't spend money until you have it :)",
