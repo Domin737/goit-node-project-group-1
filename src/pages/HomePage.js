@@ -17,11 +17,12 @@ import {
 import { showModal } from '../components/Modal';
 import { API_URL } from '../config';
 import logo from '../images/logo-small.svg';
+import { Income } from '../components/Incomes';
 
 export default function HomePage() {
   console.log('function HomePage - HomePage Rendering');
   return `
-      <div class="container">
+    <div class="container">
       <header class="header">
         <div class="logo">
           <img src="${logo}" alt="Kapu$ta Logo">
@@ -29,15 +30,52 @@ export default function HomePage() {
         ${LogoutButton()}
       </header>
       <main class="main-content">
-        ${Balance()}
-        <div class="transactions-container">
-          ${TransactionForm()}
-          ${TransactionList()}
+        <ul id="tabs" style="
+              list-style: none;
+              display: flex;
+              gap: 16px;
+              padding: 32px;
+          ">
+          <li data-target="#expenses-tab">Expenses</li>
+          <li data-target="#income-tab">Income</li>
+        </ul>
+
+        <div id="tabs-sections">
+          <section id="expenses-tab">
+            ${Balance()}
+            <div class="transactions-container">
+              ${TransactionForm()}
+              ${TransactionList()}
+            </div>
+          </section>
+
+          <section id="income-tab" style="display: none;">
+            ${Income()}
+            ${TransactionList()}
+          </section>
         </div>
       </main>
     </div>
   `;
 }
+
+const setupNav = () => {
+  const tabs = document.querySelector('#tabs');
+  const tabsSections = document.querySelector('#tabs-sections');
+
+  tabs.querySelectorAll('li').forEach(li => {
+    li.addEventListener('click', event => {
+      // hide all sections
+      tabsSections.querySelectorAll('section').forEach(section => {
+        section.style.display = 'none'; // lub można zastosować klasę CSS 'd-none'
+      });
+
+      // destrukturyzacja, wyświetlenie odpowiedniego targetu
+      const target = event.target.dataset.target;
+      tabsSections.querySelector(target).style.display = 'block'; // lub usunąć klasę CSS
+    });
+  });
+};
 
 export async function setupHomePage() {
   console.log('function setupHomePage - HomePage Initialization');
@@ -68,6 +106,9 @@ export async function setupHomePage() {
     console.log('function setupHomePage - Show logout modal');
     showLogoutModal();
   });
+
+  // Uruchomienie nawigacji między zakładkami
+  setupNav();
 }
 
 function showLogoutModal() {

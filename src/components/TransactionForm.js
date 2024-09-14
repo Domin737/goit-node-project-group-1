@@ -3,7 +3,7 @@ import { API_URL } from '../config';
 import { showModal, closeModal } from './Modal';
 import { checkAndShowZeroBalanceModal } from './Balance';
 
-export function TransactionForm() {
+export function TransactionForm(defaultType = '') {
   console.log('function TransactionForm - Rendering transaction form');
   return `
     <div class="transaction-form-container">
@@ -12,8 +12,12 @@ export function TransactionForm() {
         <div class="form-group">
           <select id="transaction-type" required>
             <option value="">Select type</option>
-            <option value="income">Income</option>
-            <option value="expense">Expense</option>
+            <option value="income" ${
+              defaultType === 'income' ? 'selected' : ''
+            }>Income</option>
+            <option value="expense" ${
+              defaultType === 'expense' ? 'selected' : ''
+            }>Expense</option>
           </select>
         </div>
         <div class="form-group">
@@ -56,15 +60,6 @@ export function TransactionForm() {
   `;
 }
 
-// Funkcja do zmiany formatu daty na dd.mm.rrrr
-function formatDateToDDMMYYYY(dateString) {
-  const date = new Date(dateString);
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // Miesiące są indeksowane od 0
-  const year = date.getFullYear();
-  return `${day}.${month}.${year}`;
-}
-
 export function setupTransactionForm(onTransactionAdded) {
   console.log('function setupTransactionForm - Initializing transaction form');
   const form = document.getElementById('transaction-form');
@@ -73,7 +68,7 @@ export function setupTransactionForm(onTransactionAdded) {
     e.preventDefault();
 
     const type = document.getElementById('transaction-type').value;
-    let date = document.getElementById('transaction-date').value;
+    const date = document.getElementById('transaction-date').value; // Nie formatujemy daty
     const category = document.getElementById('transaction-category').value;
     const amount = parseFloat(
       document.getElementById('transaction-amount').value
@@ -81,9 +76,6 @@ export function setupTransactionForm(onTransactionAdded) {
     const description = document.getElementById(
       'transaction-description'
     ).value;
-
-    // Przekształcenie daty na format dd.mm.rrrr
-    date = formatDateToDDMMYYYY(date);
 
     console.log('function setupTransactionForm - Adding new transaction:', {
       type,

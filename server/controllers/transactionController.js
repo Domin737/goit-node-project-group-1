@@ -5,10 +5,10 @@ const User = require('../models/userModel');
 // Dodawanie nowej transakcji (wydatku lub przychodu)
 const addTransaction = async (req, res) => {
   try {
-    const { type, category, amount, description } = req.body;
+    const { type, category, amount, description, date } = req.body;
     const user = req.user;
 
-    if (!type || !category || !amount || !description) {
+    if (!type || !category || !amount || !description || !date) {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
@@ -22,6 +22,7 @@ const addTransaction = async (req, res) => {
       category,
       amount,
       description,
+      date: new Date(date), // Konwertujemy string na obiekt Date
     });
 
     // Aktualizacja bilansu użytkownika

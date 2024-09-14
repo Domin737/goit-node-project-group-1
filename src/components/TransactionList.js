@@ -107,7 +107,7 @@ export async function setupTransactionList(onTransactionDeleted) {
               const result = await response.json();
               e.target.closest('li').remove();
               console.log(
-                'function setupDeleteButtons - ransaction deleted successfully'
+                'function setupDeleteButtons - Transaction deleted successfully'
               );
               alert(
                 'function setupDeleteButtons - Transaction deleted successfully'
