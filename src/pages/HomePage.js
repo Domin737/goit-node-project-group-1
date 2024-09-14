@@ -1,7 +1,11 @@
 // src/pages/HomePage.js
 import LogoutButton, { setupLogoutButton } from '../components/LogoutButton';
 import { handleLogout } from '../utils/logoutUtils';
-import { Balance, setupBalance } from '../components/Balance';
+import {
+  Balance,
+  setupBalance,
+  showZeroBalanceModal,
+} from '../components/Balance';
 import {
   TransactionForm,
   setupTransactionForm,
@@ -15,6 +19,7 @@ import { API_URL } from '../config';
 import logo from '../images/logo-small.svg';
 
 export default function HomePage() {
+  console.log('Renderowanie HomePage');
   return `
       <div class="container">
       <header class="header">
@@ -35,20 +40,17 @@ export default function HomePage() {
 }
 
 export async function setupHomePage() {
+  console.log('Inicjalizacja HomePage');
   const balanceSetup = await setupBalance();
   const transactionListSetup = await setupTransactionList(async newBalance => {
+    console.log('Zaktualizowano listę transakcji, nowy balans:', newBalance);
     await balanceSetup.updateBalance(newBalance);
-    if (newBalance === 0) {
-      showZeroBalanceModal();
-    }
   });
 
   setupTransactionForm(async (transaction, newBalance) => {
+    console.log('Dodano transakcję, nowy balans:', newBalance);
     await balanceSetup.updateBalance(newBalance);
     await transactionListSetup.refreshTransactions();
-    if (newBalance === 0) {
-      showZeroBalanceModal();
-    }
   });
 
   const currentBalance = await fetchCurrentBalance();
@@ -57,20 +59,13 @@ export async function setupHomePage() {
   }
 
   setupLogoutButton(() => {
+    console.log('Pokazanie modala wylogowania');
     showLogoutModal();
   });
 }
 
-function showZeroBalanceModal() {
-  showModal({
-    message:
-      "Hello! To get started, enter the current balance of your account! You can't spend money until you have it :)",
-    confirmLabel: 'OK',
-    confirmAction: () => {},
-  });
-}
-
 function showLogoutModal() {
+  console.log('Pokazanie modala wylogowania');
   showModal({
     message: 'Are you sure you want to log out?',
     confirmLabel: 'YES',
@@ -81,6 +76,7 @@ function showLogoutModal() {
 }
 
 async function fetchCurrentBalance() {
+  console.log('Pobieranie aktualnego balansu');
   try {
     const response = await fetch(`${API_URL}/users/balance`, {
       headers: {
@@ -88,9 +84,10 @@ async function fetchCurrentBalance() {
       },
     });
     const data = await response.json();
+    console.log('Pobrano aktualny balans:', data.balance);
     return data.balance;
   } catch (error) {
-    console.error('Error while retrieving balance:', error);
+    console.error('Błąd podczas pobierania balansu:', error);
     return null;
   }
 }

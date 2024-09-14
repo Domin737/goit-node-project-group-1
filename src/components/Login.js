@@ -11,6 +11,7 @@ export async function handleLogin(event) {
 
   try {
     // Wysłanie zapytania POST do API
+    console.log('Próba logowania użytkownika:', email);
     const response = await fetch(`${API_URL}/users/login`, {
       method: 'POST',
       headers: {
@@ -23,24 +24,25 @@ export async function handleLogin(event) {
 
     if (response.ok) {
       // Zalogowano pomyślnie, zapisujemy token
-      console.log('Successfully logged in:', data);
+      console.log('Zalogowano pomyślnie:', data);
       localStorage.setItem('userToken', data.token);
 
       // Wywołanie renderApp do przerysowania aplikacji
       renderApp();
     } else {
       // Obsługa błędów logowania
-      console.error('Login error:', data.message || 'Unknown error');
+      console.error('Błąd logowania:', data.message || 'Nieznany błąd');
       alert(`Login error: ${data.message}`);
     }
   } catch (error) {
-    console.error('There was a problem logging in:', error);
+    console.error('Wystąpił problem podczas logowania:', error);
     alert('There was a problem logging in. Please try again later.');
   }
 }
 
 // Funkcja renderująca formularz logowania
 export default function Login() {
+  console.log('Renderowanie formularza logowania');
   return `
     <form id="login-form">
       <label for="email">Email:</label>
