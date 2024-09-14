@@ -1,4 +1,5 @@
 // src/components/Login.js
+import log from '../utils/logger';
 import { API_URL } from '../config';
 import { renderApp } from '../index';
 
@@ -11,7 +12,7 @@ export async function handleLogin(event) {
 
   try {
     // Wysłanie zapytania POST do API
-    console.log('function handleLogin - User login attempt:', email);
+    log('function handleLogin - User login attempt:', email);
     const response = await fetch(`${API_URL}/users/login`, {
       method: 'POST',
       headers: {
@@ -24,7 +25,7 @@ export async function handleLogin(event) {
 
     if (response.ok) {
       // Zalogowano pomyślnie, zapisujemy token
-      console.log('function handleLogin - Successfully logged in:', data);
+      log('function handleLogin - Successfully logged in:', data);
       localStorage.setItem('userToken', data.token);
 
       // Wywołanie renderApp do przerysowania aplikacji
@@ -48,7 +49,7 @@ export async function handleLogin(event) {
 
 // Funkcja renderująca formularz logowania
 export default function Login() {
-  console.log('function Login - Login form rendering');
+  log('function Login - Login form rendering');
   return `
     <form id="login-form">
       <label for="email">Email:</label>

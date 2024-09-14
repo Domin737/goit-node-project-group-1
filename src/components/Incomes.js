@@ -1,4 +1,5 @@
 // src/components/Incomes.js
+import log from '../utils/logger';
 
 export const Income = () => {
   return `

@@ -1,9 +1,10 @@
 // src/components/TransactionList.js
+import log from '../utils/logger';
 import { API_URL } from '../config';
 import Modal, { setupModal } from './Modal';
 
 export function TransactionList() {
-  console.log('Rendering transaction list');
+  log('Rendering transaction list');
   return `
     <div class="transaction-container">
       <h3>List of transactions</h3>
@@ -16,7 +17,7 @@ export async function setupTransactionList(onTransactionDeleted) {
   const transactionList = document.getElementById('transaction-list');
 
   async function fetchTransactions() {
-    console.log('function fetchTransactions - Fetching transaction list');
+    log('function fetchTransactions - Fetching transaction list');
     try {
       const response = await fetch(`${API_URL}/transactions`, {
         headers: {
@@ -24,10 +25,7 @@ export async function setupTransactionList(onTransactionDeleted) {
         },
       });
       const transactions = await response.json();
-      console.log(
-        'function fetchTransactions - Fetched transactions:',
-        transactions
-      );
+      log('function fetchTransactions - Fetched transactions:', transactions);
       renderTransactions(transactions);
     } catch (error) {
       console.error(
@@ -39,7 +37,7 @@ export async function setupTransactionList(onTransactionDeleted) {
   }
 
   function renderTransactions(transactions) {
-    console.log('function renderTransactions - Rendering transactions');
+    log('function renderTransactions - Rendering transactions');
     transactionList.innerHTML = transactions
       .map(
         transaction => `
@@ -80,7 +78,7 @@ export async function setupTransactionList(onTransactionDeleted) {
     deleteButtons.forEach(button => {
       button.addEventListener('click', async e => {
         const transactionId = e.target.closest('li').dataset.id;
-        console.log(
+        log(
           'function setupDeleteButtons - Attempting to delete transaction with ID:',
           transactionId
         );
@@ -106,7 +104,7 @@ export async function setupTransactionList(onTransactionDeleted) {
 
               const result = await response.json();
               e.target.closest('li').remove();
-              console.log(
+              log(
                 'function setupDeleteButtons - Transaction deleted successfully'
               );
               alert(
@@ -140,7 +138,7 @@ function showConfirmationModal(message, confirmAction) {
   const confirmationModalContainer = document.getElementById(
     'confirmation-modal-container'
   );
-  console.log(
+  log(
     'function showConfirmationModal - Showing confirmation modal with message:',
     message
   );

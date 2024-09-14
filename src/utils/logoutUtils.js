@@ -1,4 +1,6 @@
 // src/utils/logoutUtils.js
+import log from './logger';
+
 export async function handleLogout() {
   try {
     const token = localStorage.getItem('userToken');

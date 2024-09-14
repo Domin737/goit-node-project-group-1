@@ -1,11 +1,12 @@
 // src/pages/LoginPage.js
+import log from '../utils/logger';
 import Login, { handleLogin } from '../components/Login';
 import RegisterForm, { setupRegisterForm } from '../components/RegisterForm';
 import logo from '../images/logo-big.svg';
 
 // Funkcja renderująca stronę logowania
 export default function LoginPage() {
-  console.log('function LoginPage - Rendering the login page');
+  log('function LoginPage - Rendering the login page');
   return `
     <div id="auth-container" class="auth-container">
       <div id="login-section" class="login-section">
@@ -32,25 +33,23 @@ export function setupAuthForms() {
   const loginSection = document.getElementById('login-section');
   const registerSection = document.getElementById('register-section');
 
-  console.log(
-    'function setupAuthForms - Initialization of authorization forms'
-  );
+  log('function setupAuthForms - Initialization of authorization forms');
   loginForm.addEventListener('submit', handleLogin);
 
   switchToRegisterBtn.addEventListener('click', () => {
-    console.log('function setupAuthForms - Switching to the registration form');
+    log('function setupAuthForms - Switching to the registration form');
     loginSection.style.display = 'none';
     registerSection.style.display = 'block';
   });
 
   switchToLoginBtn.addEventListener('click', () => {
-    console.log('function setupAuthForms - Switching to login form');
+    log('function setupAuthForms - Switching to login form');
     registerSection.style.display = 'none';
     loginSection.style.display = 'block';
   });
 
   setupRegisterForm(() => {
-    console.log(
+    log(
       'function setupAuthForms - Registration completed successfully, back to login'
     );
     registerSection.style.display = 'none';

@@ -1,6 +1,8 @@
 // src/components/RegisterForm.js
+import log from '../utils/logger';
+
 export default function RegisterForm() {
-  console.log('function RegisterForm - Rendering of registration form');
+  log('function RegisterForm - Rendering of registration form');
   return `
     <form id="register-form">
       <h2>Registration</h2>
@@ -23,9 +25,7 @@ export default function RegisterForm() {
 
 export function setupRegisterForm(onRegisterSuccess) {
   const form = document.getElementById('register-form');
-  console.log(
-    'function setupRegisterForm - Initializing the registration form'
-  );
+  log('function setupRegisterForm - Initializing the registration form');
 
   form.addEventListener('submit', async e => {
     e.preventDefault();
@@ -33,7 +33,7 @@ export function setupRegisterForm(onRegisterSuccess) {
     const userData = Object.fromEntries(formData.entries());
 
     try {
-      console.log(
+      log(
         'function setupRegisterForm - User registration attempt:',
         userData.email
       );
@@ -46,9 +46,7 @@ export function setupRegisterForm(onRegisterSuccess) {
       });
 
       if (response.ok) {
-        console.log(
-          'function setupRegisterForm - Registration completed successfully'
-        );
+        log('function setupRegisterForm - Registration completed successfully');
         alert('Registration successful! You can now log in.');
         onRegisterSuccess();
       } else {

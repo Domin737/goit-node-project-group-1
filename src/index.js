@@ -1,4 +1,5 @@
 // src/index.js
+import log from './utils/logger';
 import HomePage, { setupHomePage } from './pages/HomePage';
 import LoginPage, { setupAuthForms } from './pages/LoginPage';
 import './styles/index.scss';

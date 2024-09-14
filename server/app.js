@@ -3,6 +3,9 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const path = require('path');
+const log = require('./utils/logger');
+global.log = log;
+
 require('dotenv').config();
 
 const app = express();
@@ -41,5 +44,5 @@ app.use((err, req, res, next) => {
 // Konfiguracja portu
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Port - The server is running on the port: ${PORT}`);
+  log(`Port - The server is running on the port: ${PORT}`);
 });

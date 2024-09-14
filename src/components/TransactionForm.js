@@ -1,10 +1,11 @@
 // src/components/TransactionForm.js
+import log from '../utils/logger';
 import { API_URL } from '../config';
 import { showModal, closeModal } from './Modal';
 import { checkAndShowZeroBalanceModal } from './Balance';
 
 export function TransactionForm(defaultType = '') {
-  console.log('function TransactionForm - Rendering transaction form');
+  log('function TransactionForm - Rendering transaction form');
   return `
     <div class="transaction-form-container">
       <h3>Add transaction</h3>
@@ -61,7 +62,7 @@ export function TransactionForm(defaultType = '') {
 }
 
 export function setupTransactionForm(onTransactionAdded) {
-  console.log('function setupTransactionForm - Initializing transaction form');
+  log('function setupTransactionForm - Initializing transaction form');
   const form = document.getElementById('transaction-form');
 
   form.addEventListener('submit', async e => {
@@ -77,7 +78,7 @@ export function setupTransactionForm(onTransactionAdded) {
       'transaction-description'
     ).value;
 
-    console.log('function setupTransactionForm - Adding new transaction:', {
+    log('function setupTransactionForm - Adding new transaction:', {
       type,
       date,
       category,
@@ -100,7 +101,7 @@ export function setupTransactionForm(onTransactionAdded) {
       }
 
       const result = await response.json();
-      console.log(
+      log(
         'function setupTransactionForm - Transaction added successfully:',
         result
       );

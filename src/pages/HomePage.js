@@ -1,4 +1,5 @@
 // src/pages/HomePage.js
+import log from '../utils/logger';
 import LogoutButton, { setupLogoutButton } from '../components/LogoutButton';
 import { handleLogout } from '../utils/logoutUtils';
 import {
@@ -20,7 +21,7 @@ import logo from '../images/logo-small.svg';
 import { Income } from '../components/Incomes';
 
 export default function HomePage() {
-  console.log('function HomePage - HomePage Rendering');
+  log('function HomePage - HomePage Rendering');
   return `
     <div class="container">
       <header class="header">
@@ -78,10 +79,10 @@ const setupNav = () => {
 };
 
 export async function setupHomePage() {
-  console.log('function setupHomePage - HomePage Initialization');
+  log('function setupHomePage - HomePage Initialization');
   const balanceSetup = await setupBalance();
   const transactionListSetup = await setupTransactionList(async newBalance => {
-    console.log(
+    log(
       'function setupHomePage - Updated transaction list, new balance:',
       newBalance
     );
@@ -89,10 +90,7 @@ export async function setupHomePage() {
   });
 
   setupTransactionForm(async (transaction, newBalance) => {
-    console.log(
-      'function setupHomePage - Added transaction, new balance:',
-      newBalance
-    );
+    log('function setupHomePage - Added transaction, new balance:', newBalance);
     await balanceSetup.updateBalance(newBalance);
     await transactionListSetup.refreshTransactions();
   });
@@ -103,7 +101,7 @@ export async function setupHomePage() {
   }
 
   setupLogoutButton(() => {
-    console.log('function setupHomePage - Show logout modal');
+    log('function setupHomePage - Show logout modal');
     showLogoutModal();
   });
 
@@ -112,7 +110,7 @@ export async function setupHomePage() {
 }
 
 function showLogoutModal() {
-  console.log('function setupHomePage - Show logout modal');
+  log('function setupHomePage - Show logout modal');
   showModal({
     message: 'Are you sure you want to log out?',
     confirmLabel: 'YES',
@@ -123,7 +121,7 @@ function showLogoutModal() {
 }
 
 async function fetchCurrentBalance() {
-  console.log('function fetchCurrentBalance - Downloading current balance');
+  log('function fetchCurrentBalance - Downloading current balance');
   try {
     const response = await fetch(`${API_URL}/users/balance`, {
       headers: {
@@ -131,7 +129,7 @@ async function fetchCurrentBalance() {
       },
     });
     const data = await response.json();
-    console.log(
+    log(
       'function fetchCurrentBalance - Current balance downloaded:',
       data.balance
     );

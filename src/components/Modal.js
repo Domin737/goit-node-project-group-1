@@ -1,4 +1,6 @@
 // src/components/Modal.js
+import log from '../utils/logger';
+
 export default function Modal({
   message,
   confirmAction,
@@ -6,7 +8,7 @@ export default function Modal({
   cancelAction = null,
   cancelLabel = 'NO',
 }) {
-  console.log('function Modal - Creating a message modal:', message);
+  log('function Modal - Creating a message modal:', message);
   return `
     <div class="modal-overlay">
       <div class="modal">
@@ -32,20 +34,20 @@ export function setupModal(confirmAction, cancelAction = null) {
   const closeBtn = document.getElementById('modal-close-btn');
 
   confirmBtn.addEventListener('click', () => {
-    console.log('function setupModal - Confirm button clicked in modal');
+    log('function setupModal - Confirm button clicked in modal');
     confirmAction();
     closeModal();
   });
 
   closeBtn.addEventListener('click', () => {
-    console.log('function setupModal - The modal close button was clicked');
+    log('function setupModal - The modal close button was clicked');
     closeModal();
   });
 
   if (cancelAction) {
     const cancelBtn = document.getElementById('modal-cancel-btn');
     cancelBtn.addEventListener('click', () => {
-      console.log('function setupModal - Cancel button clicked in modal');
+      log('function setupModal - Cancel button clicked in modal');
       cancelAction();
       closeModal();
     });
@@ -55,7 +57,7 @@ export function setupModal(confirmAction, cancelAction = null) {
 }
 
 export function closeModal() {
-  console.log('function closeModal - Closing the modal');
+  log('function closeModal - Closing the modal');
   const modalOverlay = document.querySelector('.modal-overlay');
   if (modalOverlay) {
     modalOverlay.remove();
@@ -66,7 +68,7 @@ function setupOutsideClickModal() {
   const modalOverlay = document.querySelector('.modal-overlay');
   modalOverlay.addEventListener('click', event => {
     if (event.target === modalOverlay) {
-      console.log(
+      log(
         'function setupOutsideClickModal - Clicked outside the modal, closing the modal'
       );
       closeModal();
@@ -75,7 +77,7 @@ function setupOutsideClickModal() {
 }
 
 export function showModal(options) {
-  console.log('function showModal - Showing modal with options:', options);
+  log('function showModal - Showing modal with options:', options);
   const modalContainer = document.createElement('div');
   modalContainer.innerHTML = Modal(options);
   document.body.appendChild(modalContainer.firstElementChild);
