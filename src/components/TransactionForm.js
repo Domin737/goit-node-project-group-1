@@ -53,7 +53,7 @@ export function TransactionForm(defaultType = '') {
           <input type="text" id="transaction-description" placeholder="Description" required>
         </div>
         <div class="form-group">
-          <button type="submit" class="btn btn-primary">Add</button>
+          <button type="submit" class="btn btn-primary">Input</button>
           <button type="reset" class="btn btn-secondary">Clear</button>
         </div>
       </form>

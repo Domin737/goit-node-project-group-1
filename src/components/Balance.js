@@ -28,8 +28,8 @@ export function Balance() {
     <div class="balance-container">
       <h2>BALANCE</h2>
       <p id="balance-amount" class="balance-amount">Loading...</p>
+      <button id="update-balance-btn" class="btn btn-primary">Confirm</button>
       <div class="balance-actions">
-        <button id="update-balance-btn" class="btn btn-primary">Input</button>
         <button id="show-reports-btn" class="btn btn-secondary">Reports</button>
       </div>
     </div>

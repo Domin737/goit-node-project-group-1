@@ -18,8 +18,13 @@ export default function LoginPage() {
         </div>
       </div>
       <div id="register-section" style="display: none;">
-        ${RegisterForm()}
-        <button id="switch-to-login">Log in</button>
+        <div class="logo">
+          <img src="${logo}" alt="Kapu$ta Logo">
+        </div>
+        <div class="auth-form">
+          ${RegisterForm()}
+          <button id="switch-to-login">Log in</button>
+        </div>
       </div>
     </div>
   `;
@@ -39,13 +44,13 @@ export function setupAuthForms() {
   switchToRegisterBtn.addEventListener('click', () => {
     log('function setupAuthForms - Switching to the registration form');
     loginSection.style.display = 'none';
-    registerSection.style.display = 'block';
+    registerSection.style.display = 'flex';
   });
 
   switchToLoginBtn.addEventListener('click', () => {
     log('function setupAuthForms - Switching to login form');
     registerSection.style.display = 'none';
-    loginSection.style.display = 'block';
+    loginSection.style.display = 'flex';
   });
 
   setupRegisterForm(() => {
@@ -53,6 +58,6 @@ export function setupAuthForms() {
       'function setupAuthForms - Registration completed successfully, back to login'
     );
     registerSection.style.display = 'none';
-    loginSection.style.display = 'block';
+    loginSection.style.display = 'flex';
   });
 }
