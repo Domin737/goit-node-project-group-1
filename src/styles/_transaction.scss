@@ -9,6 +9,8 @@
 
 .transaction-form {
   margin-bottom: $spacing-large;
+  display: flex;
+  align-items: baseline;
 
   h3 {
     font-size: $font-size-large;

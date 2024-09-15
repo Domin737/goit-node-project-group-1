@@ -5,6 +5,9 @@
 .balance-container {
   @include card;
   margin-bottom: $spacing-large;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: baseline;
 
   @include mobile {
     padding: $spacing-medium;

@@ -32,6 +32,18 @@
     }
   }
 
+  &-outline {
+    background-color: #fafbfd;
+    border-radius: 10px 10px 0 0;
+
+    &:hover,
+    &:focus {
+      //background-color: $secondary-color;
+      color: $primary-color;
+      background-color: #e9ecef;
+    }
+  }
+
   &-google {
     background-color: $white;
     color: $text-color;

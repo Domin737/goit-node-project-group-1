@@ -3,33 +3,33 @@ import log from '../utils/logger';
 import { API_URL } from '../config';
 import Modal, { setupModal } from './Modal';
 
-export function TransactionList() {
-  log('Rendering transaction list');
+export function TransactionList({ type }) {
+  log(`TransactionList - Rendering transaction list for ${type}`);
   return `
     <div class="transaction-container">
-      <h3>List of transactions</h3>
-      <ul id="transaction-list" class="transaction-list"></ul>
+      <h3>List of ${type === 'income' ? 'Income' : 'Expenses'}</h3>
+      <ul id="transaction-list-${type}" class="transaction-list"></ul>
     </div>
   `;
 }
 
-export async function setupTransactionList(onTransactionDeleted) {
-  const transactionList = document.getElementById('transaction-list');
+export async function setupTransactionList(onTransactionDeleted, type) {
+  const transactionList = document.getElementById(`transaction-list-${type}`);
 
   async function fetchTransactions() {
-    log('function fetchTransactions - Fetching transaction list');
+    log(`TransactionList - Fetching ${type} transactions`);
     try {
-      const response = await fetch(`${API_URL}/transactions`, {
+      const response = await fetch(`${API_URL}/transactions?type=${type}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('userToken')}`,
         },
       });
       const transactions = await response.json();
-      log('function fetchTransactions - Fetched transactions:', transactions);
+      log(`TransactionList - Fetched ${type} transactions:`, transactions);
       renderTransactions(transactions);
     } catch (error) {
       console.error(
-        'function fetchTransactions - Error fetching transactions:',
+        `TransactionList - Error fetching ${type} transactions:`,
         error
       );
       transactionList.innerHTML = '<li>Error loading transactions</li>';
@@ -37,7 +37,7 @@ export async function setupTransactionList(onTransactionDeleted) {
   }
 
   function renderTransactions(transactions) {
-    log('function renderTransactions - Rendering transactions');
+    log(`TransactionList - Rendering ${type} transactions`);
     transactionList.innerHTML = transactions
       .map(
         transaction => `
@@ -64,22 +64,23 @@ export async function setupTransactionList(onTransactionDeleted) {
     setupDeleteButtons();
   }
 
-  // Funkcja formatująca datę na dd.mm.rrrr
   function formatDate(dateString) {
     const date = new Date(dateString);
     const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Miesiące są indeksowane od 0
+    const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
     return `${day}.${month}.${year}`;
   }
 
   function setupDeleteButtons() {
-    const deleteButtons = document.querySelectorAll('.delete-transaction');
+    const deleteButtons = document.querySelectorAll(
+      `#transaction-list-${type} .delete-transaction`
+    );
     deleteButtons.forEach(button => {
       button.addEventListener('click', async e => {
         const transactionId = e.target.closest('li').dataset.id;
         log(
-          'function setupDeleteButtons - Attempting to delete transaction with ID:',
+          `TransactionList - Attempting to delete ${type} transaction with ID:`,
           transactionId
         );
         showConfirmationModal(
@@ -104,11 +105,11 @@ export async function setupTransactionList(onTransactionDeleted) {
 
               const result = await response.json();
               e.target.closest('li').remove();
-              log(
-                'function setupDeleteButtons - Transaction deleted successfully'
-              );
+              log(`TransactionList - ${type} transaction deleted successfully`);
               alert(
-                'function setupDeleteButtons - Transaction deleted successfully'
+                `${
+                  type.charAt(0).toUpperCase() + type.slice(1)
+                } transaction deleted successfully`
               );
 
               if (onTransactionDeleted) {
@@ -116,10 +117,10 @@ export async function setupTransactionList(onTransactionDeleted) {
               }
             } catch (error) {
               console.error(
-                'function setupDeleteButtons - Error while deleting transaction:',
+                `TransactionList - Error while deleting ${type} transaction:`,
                 error
               );
-              alert('An error occurred while deleting the transaction');
+              alert(`An error occurred while deleting the ${type} transaction`);
             }
           }
         );
@@ -138,10 +139,7 @@ function showConfirmationModal(message, confirmAction) {
   const confirmationModalContainer = document.getElementById(
     'confirmation-modal-container'
   );
-  log(
-    'function showConfirmationModal - Showing confirmation modal with message:',
-    message
-  );
+  log('TransactionList - Showing confirmation modal with message:', message);
   confirmationModalContainer.innerHTML = Modal({
     message,
     confirmLabel: 'YES',
