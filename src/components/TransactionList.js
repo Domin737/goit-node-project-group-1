@@ -8,13 +8,13 @@ export function TransactionList({ type }) {
   return `
     <div class="transaction-container">
       <h3>List of ${type === 'income' ? 'Income' : 'Expenses'}</h3>
-      <ul id="transaction-list-${type}" class="transaction-list"></ul>
+      <ul id="transaction-list" class="transaction-list"></ul>
     </div>
   `;
 }
 
 export async function setupTransactionList(onTransactionDeleted, type) {
-  const transactionList = document.getElementById(`transaction-list-${type}`);
+  const transactionList = document.getElementById('transaction-list');
 
   async function fetchTransactions() {
     log(`TransactionList - Fetching ${type} transactions`);
@@ -73,9 +73,7 @@ export async function setupTransactionList(onTransactionDeleted, type) {
   }
 
   function setupDeleteButtons() {
-    const deleteButtons = document.querySelectorAll(
-      `#transaction-list-${type} .delete-transaction`
-    );
+    const deleteButtons = document.querySelectorAll('.delete-transaction');
     deleteButtons.forEach(button => {
       button.addEventListener('click', async e => {
         const transactionId = e.target.closest('li').dataset.id;
@@ -128,8 +126,10 @@ export async function setupTransactionList(onTransactionDeleted, type) {
     });
   }
 
+  // Inicjalizacja listy transakcji
   await fetchTransactions();
 
+  // Zwracamy obiekt z metodą do odświeżania listy transakcji
   return {
     refreshTransactions: fetchTransactions,
   };
