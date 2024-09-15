@@ -9,7 +9,7 @@ export async function handleLogout() {
       throw new Error('No authentication token');
     }
 
-    const response = await fetch(`${API_URL}/api/users/logout`, {
+    const response = await fetch(`api/users/logout`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
