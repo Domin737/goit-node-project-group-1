@@ -136,3 +136,8 @@
     font-weight: $font-weight-bold;
   }
 }
+.transaction-view {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}

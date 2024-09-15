@@ -19,6 +19,8 @@ import {
 import { showModal } from '../components/Modal';
 import { API_URL } from '../config';
 import logo from '../images/logo-small.svg';
+import { SummaryList, setupSummaryList } from '../components/SummaryList';
+import { set } from 'mongoose';
 
 export default function HomePage() {
   log('HomePage - Rendering HomePage');
@@ -41,7 +43,10 @@ export default function HomePage() {
           <button class="btn btn-outline tab-button" data-tab="income">INCOME</button>
         </div>
         ${TransactionForm()}
-        <div id="transaction-list-container"></div>
+        <div class="transaction-view">
+          <div id="transaction-list-container"></div>
+          <div id="summary-list-container"></div>
+        </div>
       </main>
     </div>
   `;
@@ -54,26 +59,36 @@ const setupTabs = () => {
     'transaction-list-container'
   );
 
+  const summaryListContainer = document.querySelector(
+    '#summary-list-container'
+  );
+
   const updateTransactionList = async type => {
+    // nie asynchroniczna funkcja
     log(`HomePage - Updating transaction list for ${type}`);
     transactionListContainer.innerHTML = TransactionList({ type });
+    summaryListContainer.innerHTML = SummaryList();
     await setupTransactionList(async newBalance => {
+      //nie await
       log(`HomePage - Updated ${type} list, new balance:`, newBalance);
       await balanceSetup.updateBalance(newBalance);
     }, type);
+
+    setupSummaryList(type);
 
     changeTypeTransactionForm(type);
   };
 
   tabButtons.forEach(button => {
     button.addEventListener('click', async () => {
+      // nie asynchroniczna funkcja
       const tabType = button.getAttribute('data-tab');
       log(`HomePage - Tab ${tabType} clicked`);
 
       tabButtons.forEach(btn => btn.classList.remove('active'));
       button.classList.add('active');
 
-      await updateTransactionList(tabType);
+      await updateTransactionList(tabType); // nie await
     });
   });
 
@@ -108,7 +123,7 @@ export async function setupHomePage() {
   });
 
   // Inicjalizacja początkowej listy transakcji (domyślnie expenses)
-  await updateTransactionList('expense');
+  await updateTransactionList('expense', updateTransactionList);
 
   // Pobranie informacji o użytkowniku (Gravatar + name)
   await loadUserInfo();

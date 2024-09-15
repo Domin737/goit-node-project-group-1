@@ -2,6 +2,7 @@
 import log from '../utils/logger';
 import { API_URL } from '../config';
 import Modal, { setupModal } from './Modal';
+import { setupSummaryList } from './SummaryList';
 
 export function TransactionList({ type }) {
   log(`TransactionList - Rendering transaction list for ${type}`);
@@ -113,6 +114,7 @@ export async function setupTransactionList(onTransactionDeleted, type) {
               if (onTransactionDeleted) {
                 onTransactionDeleted(result.newBalance);
               }
+              setupSummaryList(type);
             } catch (error) {
               console.error(
                 `TransactionList - Error while deleting ${type} transaction:`,
