@@ -39,8 +39,10 @@ export default function HomePage() {
       <main class="main-content">
         ${Balance()}
         <div class="tabs">
+          <button id="arrow-left" class="arrow-button">◀</button>
           <button class="btn btn-outline tab-button active" data-tab="expense">EXPENSES</button>
           <button class="btn btn-outline tab-button" data-tab="income">INCOME</button>
+          <button id="arrow-right" class="arrow-button">▶</button>
         </div>
         ${TransactionForm()}
         <div class="transaction-view">
@@ -64,12 +66,10 @@ const setupTabs = () => {
   );
 
   const updateTransactionList = async type => {
-    // nie asynchroniczna funkcja
     log(`HomePage - Updating transaction list for ${type}`);
     transactionListContainer.innerHTML = TransactionList({ type });
     summaryListContainer.innerHTML = SummaryList();
     await setupTransactionList(async newBalance => {
-      //nie await
       log(`HomePage - Updated ${type} list, new balance:`, newBalance);
       await balanceSetup.updateBalance(newBalance);
     }, type);
@@ -79,17 +79,38 @@ const setupTabs = () => {
     changeTypeTransactionForm(type);
   };
 
+  const switchTab = newTab => {
+    tabButtons.forEach(btn => btn.classList.remove('active'));
+    const activeButton = document.querySelector(`[data-tab="${newTab}"]`);
+    activeButton.classList.add('active');
+    updateTransactionList(newTab);
+  };
+
   tabButtons.forEach(button => {
-    button.addEventListener('click', async () => {
-      // nie asynchroniczna funkcja
+    button.addEventListener('click', () => {
       const tabType = button.getAttribute('data-tab');
       log(`HomePage - Tab ${tabType} clicked`);
-
-      tabButtons.forEach(btn => btn.classList.remove('active'));
-      button.classList.add('active');
-
-      await updateTransactionList(tabType); // nie await
+      switchTab(tabType);
     });
+  });
+
+  // Obsługa strzałek
+  document.getElementById('arrow-left').addEventListener('click', () => {
+    const currentActive = document.querySelector('.tab-button.active');
+    const newTab =
+      currentActive.getAttribute('data-tab') === 'income'
+        ? 'expense'
+        : 'income';
+    switchTab(newTab);
+  });
+
+  document.getElementById('arrow-right').addEventListener('click', () => {
+    const currentActive = document.querySelector('.tab-button.active');
+    const newTab =
+      currentActive.getAttribute('data-tab') === 'expense'
+        ? 'income'
+        : 'expense';
+    switchTab(newTab);
   });
 
   return updateTransactionList;
@@ -123,7 +144,7 @@ export async function setupHomePage() {
   });
 
   // Inicjalizacja początkowej listy transakcji (domyślnie expenses)
-  await updateTransactionList('expense', updateTransactionList);
+  await updateTransactionList('expense');
 
   // Pobranie informacji o użytkowniku (Gravatar + name)
   await loadUserInfo();

@@ -76,6 +76,26 @@
   }
 }
 
+.tabs {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.arrow-button {
+  padding: 5px 10px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  margin: 0 10px;
+  font-size: 18px;
+  color: $secondary-color;
+
+  &:hover {
+    color: $primary-color;
+  }
+}
+
 .btn-group {
   display: flex;
   gap: $spacing-medium;
