@@ -1,5 +1,6 @@
 // server/models/userModel.js
 const mongoose = require('mongoose');
+const gravatar = require('gravatar'); // Dodanie Gravatara
 
 const userSchema = mongoose.Schema(
   {
@@ -15,6 +16,13 @@ const userSchema = mongoose.Schema(
     password: {
       type: String,
       required: true,
+    },
+    avatarURL: {
+      type: String,
+      default: function () {
+        // Automatyczne generowanie URL avatara z Gravatar na podstawie emaila
+        return gravatar.url(this.email, { s: '250', d: 'retro' }, true);
+      },
     },
     token: {
       type: String,

@@ -4,6 +4,31 @@ import { API_URL } from '../config';
 import { showModal, closeModal } from './Modal';
 import { checkAndShowZeroBalanceModal } from './Balance';
 
+const TRANSACTIONS = {
+  expense: {
+    type: 'expense',
+    categories: [
+      'Transport',
+      'Products',
+      'Health',
+      'Alcohol',
+      'Entertainment',
+      'Housing',
+      'Technique',
+      'Communication',
+      'Hobbies',
+      'Education',
+      'Other',
+    ],
+  },
+  income: {
+    type: 'income',
+    categories: ['Salary', 'Additional income'],
+  },
+};
+
+let viewType = null;
+
 export function TransactionForm(defaultType = '') {
   log('function TransactionForm - Rendering transaction form');
   return `
@@ -11,47 +36,19 @@ export function TransactionForm(defaultType = '') {
       <h3>Add transaction</h3>
       <form id="transaction-form" class="transaction-form">
         <div class="form-group">
-          <select id="transaction-type" required>
-            <option value="">Select type</option>
-            <option value="income" ${
-              defaultType === 'income' ? 'selected' : ''
-            }>Income</option>
-            <option value="expense" ${
-              defaultType === 'expense' ? 'selected' : ''
-            }>Expense</option>
-          </select>
-        </div>
-        <div class="form-group">
           <input type="date" id="transaction-date" required>
         </div>
         <div class="form-group">
+          <input type="text" id="transaction-description" placeholder="Description" required>
+        </div>
+        <div class="form-group">
           <select id="transaction-category" required>
-            <option value="">Select category</option>
-            <optgroup label="Expenses">
-              <option value="transport">Transport</option>
-              <option value="products">Products</option>
-              <option value="health">Health</option>
-              <option value="alcohol">Alcohol</option>
-              <option value="entertainment">Entertainment</option>
-              <option value="housing">Housing</option>
-              <option value="technique">Technique</option>
-              <option value="communication">Communication</option>
-              <option value="sports">Sports, hobbies</option>
-              <option value="education">Education</option>
-              <option value="other">Other</option>
-            </optgroup>
-            <optgroup label="Income">
-              <option value="salary">Salary</option>
-              <option value="additional_income">Additional income</option>
-            </optgroup>
           </select>
         </div>
         <div class="form-group">
           <input type="number" id="transaction-amount" placeholder="Amount" step="0.01" required>
         </div>
-        <div class="form-group">
-          <input type="text" id="transaction-description" placeholder="Description" required>
-        </div>
+
         <div class="form-group">
           <button type="submit" class="btn btn-primary">Input</button>
           <button type="reset" class="btn btn-secondary">Clear</button>
@@ -61,15 +58,40 @@ export function TransactionForm(defaultType = '') {
   `;
 }
 
+export const changeTypeTransactionForm = type => {
+  const transaction = TRANSACTIONS[type];
+
+  const setCategorySelect = categories => {
+    const select = document.querySelector('#transaction-category');
+
+    select.innerHTML =
+      `<option disabled selected>Product category</option>` +
+      categories
+        .map(category => {
+          const value = category.includes(' ')
+            ? category.split(' ').join('_').toLowerCase()
+            : category.toLowerCase();
+
+          return `<option value="${value}">${category}</option>`; //<option value="additional_income">Additional income</option>
+        })
+        .join('');
+  };
+
+  viewType = transaction.type;
+  setCategorySelect(transaction.categories);
+};
+
 export function setupTransactionForm(onTransactionAdded) {
   log('function setupTransactionForm - Initializing transaction form');
   const form = document.getElementById('transaction-form');
 
+  const dateInput = form.querySelector('#transaction-date');
+  dateInput.value = new Date().toISOString().slice(0, 10);
+
   form.addEventListener('submit', async e => {
     e.preventDefault();
 
-    const type = document.getElementById('transaction-type').value;
-    const date = document.getElementById('transaction-date').value; // Nie formatujemy daty
+    const date = document.getElementById('transaction-date').value;
     const category = document.getElementById('transaction-category').value;
     const amount = parseFloat(
       document.getElementById('transaction-amount').value
@@ -79,7 +101,7 @@ export function setupTransactionForm(onTransactionAdded) {
     ).value;
 
     log('function setupTransactionForm - Adding new transaction:', {
-      type,
+      type: viewType,
       date,
       category,
       amount,
@@ -93,7 +115,13 @@ export function setupTransactionForm(onTransactionAdded) {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('userToken')}`,
         },
-        body: JSON.stringify({ type, date, category, amount, description }),
+        body: JSON.stringify({
+          type: viewType,
+          date,
+          category,
+          amount,
+          description,
+        }),
       });
 
       if (!response.ok) {

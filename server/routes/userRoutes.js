@@ -7,6 +7,7 @@ const {
   logoutUser,
   updateBalance,
   getBalance,
+  getCurrentUser,
 } = require('../controllers/userController');
 const { protect } = require('../middleware/authMiddleware');
 
@@ -18,5 +19,6 @@ router.post('/login', loginUser);
 router.post('/logout', protect, logoutUser);
 router.get('/balance', protect, getBalance);
 router.put('/balance', protect, updateBalance);
+router.get('/current', protect, getCurrentUser);
 
 module.exports = router;

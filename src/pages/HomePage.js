@@ -9,6 +9,7 @@ import {
 } from '../components/Balance';
 import {
   TransactionForm,
+  changeTypeTransactionForm,
   setupTransactionForm,
 } from '../components/TransactionForm';
 import {
@@ -26,6 +27,10 @@ export default function HomePage() {
       <header class="header">
         <div class="logo">
           <img src="${logo}" alt="Kapu$ta Logo">
+        </div>
+        <div class="user-info">
+          <img id="user-avatar" class="user-avatar" alt="User Avatar" />
+          <span id="user-name"></span>
         </div>
         ${LogoutButton()}
       </header>
@@ -56,6 +61,8 @@ const setupTabs = () => {
       log(`HomePage - Updated ${type} list, new balance:`, newBalance);
       await balanceSetup.updateBalance(newBalance);
     }, type);
+
+    changeTypeTransactionForm(type);
   };
 
   tabButtons.forEach(button => {
@@ -102,6 +109,26 @@ export async function setupHomePage() {
 
   // Inicjalizacja początkowej listy transakcji (domyślnie expenses)
   await updateTransactionList('expense');
+
+  // Pobranie informacji o użytkowniku (Gravatar + name)
+  await loadUserInfo();
+}
+
+async function loadUserInfo() {
+  try {
+    const response = await fetch(`${API_URL}/users/current`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('userToken')}`,
+      },
+    });
+    const userData = await response.json();
+
+    // Wstawienie avatara i nazwy użytkownika
+    document.getElementById('user-avatar').src = userData.avatarURL;
+    document.getElementById('user-name').textContent = userData.name;
+  } catch (error) {
+    console.error('HomePage - Error loading user info:', error);
+  }
 }
 
 function showLogoutModal() {

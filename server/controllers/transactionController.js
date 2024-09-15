@@ -77,7 +77,11 @@ const deleteTransaction = async (req, res) => {
 const getTransactions = async (req, res) => {
   try {
     const user = req.user;
-    const transactions = await Transaction.find({ user: user._id }).sort({
+    const query = req.query;
+    const transactions = await Transaction.find({
+      user: user._id,
+      type: query.type,
+    }).sort({
       date: -1,
     });
     res.json(transactions);

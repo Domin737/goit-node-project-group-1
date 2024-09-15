@@ -43,6 +43,17 @@ body {
     }
   }
 
+  .user-info {
+    display: flex;
+    gap: $spacing-medium;
+    align-items: center;
+
+    img {
+      height: 32px;
+      border-radius: 50%;
+    }
+  }
+
   .nav-menu {
     display: flex;
     gap: $spacing-medium;

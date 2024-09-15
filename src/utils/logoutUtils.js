@@ -1,5 +1,6 @@
 // src/utils/logoutUtils.js
 import log from './logger';
+import { API_URL } from '../config';
 
 export async function handleLogout() {
   try {
@@ -8,7 +9,7 @@ export async function handleLogout() {
       throw new Error('No authentication token');
     }
 
-    const response = await fetch('/api/users/logout', {
+    const response = await fetch(`${API_URL}/api/users/logout`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
