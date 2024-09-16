@@ -1,0 +1,109 @@
+// src/styles/_auth.scss
+@import 'variables';
+@import 'mixins';
+
+.auth-container {
+  @include flex-center;
+  min-height: 100vh;
+  background-color: $background-color;
+  display: flex;
+  justify-content: center;
+
+  .login-section {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+
+    .google-section {
+      display: flex;
+      justify-content: center;
+    }
+  }
+}
+
+.auth-form {
+  @include card;
+  width: 90%;
+  max-width: 540px;
+  text-align: center;
+
+  @include tablet {
+    width: 80%;
+  }
+
+  @include desktop {
+    width: 70%;
+  }
+
+  &-logo {
+    margin-bottom: $spacing-large;
+
+    img {
+      max-width: 200px;
+    }
+  }
+
+  h2 {
+    font-size: $font-size-large;
+    font-weight: $font-weight-bold;
+    margin-bottom: $spacing-large;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-medium;
+  }
+
+  .form-group {
+    text-align: left;
+
+    label {
+      display: block;
+      margin-bottom: $spacing-small;
+      font-weight: $font-weight-bold;
+    }
+  }
+
+  input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+  }
+
+  .btn-primary {
+    margin-top: $spacing-medium;
+  }
+
+  .auth-switch {
+    margin-top: $spacing-large;
+    font-size: $font-size-small;
+
+    a {
+      color: $primary-color;
+      text-decoration: none;
+      font-weight: $font-weight-bold;
+
+      &:hover,
+      &:focus {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .google-login {
+    margin-top: $spacing-large;
+
+    p {
+      margin-bottom: $spacing-medium;
+      font-size: $font-size-small;
+      color: $dark-gray;
+    }
+  }
+}
