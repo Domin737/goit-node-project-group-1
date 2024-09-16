@@ -41,6 +41,28 @@
       @include mobile {
         width: 100%;
       }
+
+      &-reports {
+        background-color: transparent;
+        color: #52555f;
+        border: none;
+        font-weight: normal;
+        display: flex;
+        align-items: center;
+        gap: $spacing-small;
+        cursor: pointer;
+        transition: color $transition-speed;
+
+        &:hover,
+        &:focus {
+          color: $primary-color;
+        }
+
+        svg {
+          width: 20px;
+          height: 20px;
+        }
+      }
     }
   }
 }
