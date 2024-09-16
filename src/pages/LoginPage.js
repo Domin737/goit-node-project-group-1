@@ -17,7 +17,7 @@ export default function LoginPage() {
           ${Login()}
         </div>
       </div>
-      <div id="register-section" style="display: none;">
+      <div id="register-section" class="register-section" style="display: none;">
         <div class="logo">
           <img src="${logo}" alt="Kapu$ta Logo">
         </div>
