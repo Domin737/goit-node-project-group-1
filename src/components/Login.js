@@ -110,6 +110,12 @@ export default function Login() {
   log('function Login - Login form rendering');
   return `
     <form id="login-form">
+      <div class="google-section">
+        <button id="google-login-btn" class="btn btn-google">
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo">
+          Log in with Google
+        </button>
+      </div>
       <label for="email">Email:</label>
       <input type="email" id="email" required />
       
@@ -119,12 +125,6 @@ export default function Login() {
       <button type="submit" class="btn btn-primary">Log in</button>
       <button id="switch-to-register" class="btn btn-secondary">Registration</button>
     </form>
-    
-    <!-- Przyciski do logowania przez Google nie są częścią formularza -->
-    <button id="google-login-btn" class="btn btn-google">
-      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo">
-      Log in with Google
-    </button>
   `;
 }
 
