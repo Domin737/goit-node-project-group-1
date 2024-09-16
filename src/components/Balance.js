@@ -30,7 +30,12 @@ export function Balance() {
       <p id="balance-amount" class="balance-amount">Loading...</p>
       <button id="update-balance-btn" class="btn btn-primary">Update</button>
       <div class="balance-actions">
-        <button id="show-reports-btn" class="btn btn-secondary">Reports</button>
+        <button id="show-reports-btn" class="btn btn-reports">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 20H14V4H10V20ZM4 20H8V12H4V20ZM16 9V20H20V9H16Z" fill="currentColor"/>
+          </svg>
+          Reports
+        </button>
       </div>
     </div>
     <div id="confirmation-modal-container"></div>

@@ -58,14 +58,17 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 50%;
 
     img {
       margin-right: $spacing-small;
+      width: $font-size-base;
+      height: $font-size-base;
     }
 
     &:hover,
     &:focus {
-      background-color: $light-gray;
+      background-color: $secondary-color;
     }
   }
 
