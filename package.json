@@ -20,6 +20,7 @@
     "firebase": "^10.13.1",
     "firebase-admin": "^12.5.0",
     "gravatar": "^1.8.2",
+    "helmet": "^7.1.0",
     "http-proxy-middleware": "^2.0.6",
     "jsonwebtoken": "^9.0.2",
     "modern-normalize": "^3.0.1",

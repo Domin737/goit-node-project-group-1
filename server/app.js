@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const path = require('path');
+const helmet = require('helmet');
 const log = require('./utils/logger');
 global.log = log;
 
@@ -13,6 +14,17 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(cors());
+
+// Użyj helmet do ustawienia nagłówków bezpieczeństwa
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false,
+    crossOriginOpenerPolicy: {
+      policy: 'same-origin-allow-popups',
+    },
+  })
+);
 
 // Połączenie z bazą danych
 const connectDB = require('./config/db');
