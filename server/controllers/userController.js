@@ -1,25 +1,29 @@
 // server/controllers/userController.js
+
+// Importowanie niezbędnych modułów i modeli
 const User = require('../models/userModel');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const gravatar = require('gravatar');
 const admin = require('../firebaseAdmin'); // Import Firebase Admin SDK
 
-// Tworzenie tokena JWT
+// Funkcja generująca token JWT
 const generateToken = id => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: '30d',
   });
 };
 
-// Rejestracja użytkownika
+// Kontroler do rejestracji użytkownika
 const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
 
+  // Sprawdzenie, czy wszystkie wymagane pola są wypełnione
   if (!name || !email || !password) {
     return res.status(400).json({ message: 'Please fill all fields' });
   }
 
+  // Sprawdzenie, czy użytkownik o podanym emailu już istnieje
   const userExists = await User.findOne({ email });
   if (userExists) {
     return res
@@ -27,9 +31,11 @@ const registerUser = async (req, res) => {
       .json({ message: 'The email address is already registered' });
   }
 
+  // Haszowanie hasła i generowanie URL avatara
   const hashedPassword = await bcrypt.hash(password, 10);
   const avatarURL = gravatar.url(email, { s: '250', d: 'retro' }, true);
 
+  // Tworzenie nowego użytkownika
   const user = await User.create({
     name,
     email,
@@ -38,10 +44,12 @@ const registerUser = async (req, res) => {
   });
 
   if (user) {
+    // Generowanie tokena JWT i zapisywanie go w bazie danych
     const token = generateToken(user._id);
     user.token = token;
     await user.save();
 
+    // Wysyłanie odpowiedzi z danymi użytkownika i tokenem
     res.status(201).json({
       _id: user._id,
       name: user.name,
@@ -54,7 +62,7 @@ const registerUser = async (req, res) => {
   }
 };
 
-// Logowanie użytkownika za pomocą Google
+// Kontroler do logowania użytkownika za pomocą Google
 const googleLoginUser = async (req, res) => {
   const { token } = req.body;
 
@@ -83,6 +91,7 @@ const googleLoginUser = async (req, res) => {
     user.token = jwtToken;
     await user.save();
 
+    // Wysyłanie odpowiedzi z danymi użytkownika i tokenem
     res.json({
       _id: user._id,
       name: user.name,
@@ -96,16 +105,18 @@ const googleLoginUser = async (req, res) => {
   }
 };
 
-// Logowanie użytkownika (trasa /login)
+// Kontroler do logowania użytkownika (trasa /login)
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
 
+  // Sprawdzenie, czy użytkownik istnieje i czy hasło jest poprawne
   if (user && (await bcrypt.compare(password, user.password))) {
     const token = generateToken(user._id);
     user.token = token;
     await user.save();
 
+    // Wysyłanie odpowiedzi z danymi użytkownika i tokenem
     res.json({
       _id: user._id,
       name: user.name,
@@ -119,7 +130,7 @@ const loginUser = async (req, res) => {
   }
 };
 
-// Wylogowanie użytkownika
+// Kontroler do wylogowania użytkownika
 const logoutUser = async (req, res) => {
   const user = req.user;
   user.token = null;
@@ -127,7 +138,7 @@ const logoutUser = async (req, res) => {
   res.status(204).send();
 };
 
-// Aktualizacja bilansu użytkownika
+// Kontroler do aktualizacji bilansu użytkownika
 const updateBalance = async (req, res) => {
   const { balance } = req.body;
   const user = req.user;
@@ -144,22 +155,23 @@ const updateBalance = async (req, res) => {
   res.json({ balance: user.balance });
 };
 
-// Pobieranie aktualnego bilansu użytkownika
+// Kontroler do pobierania aktualnego bilansu użytkownika
 const getBalance = async (req, res) => {
   const user = req.user;
   res.json({ balance: user.balance });
 };
 
-// Pobieranie bieżącego użytkownika
+// Kontroler do pobierania bieżącego użytkownika
 const getCurrentUser = async (req, res) => {
   const { email, name, balance, avatarURL } = req.user;
   res.status(200).json({ email, name, balance, avatarURL });
 };
 
+// Eksport wszystkich kontrolerów
 module.exports = {
   registerUser,
   loginUser,
-  googleLoginUser, // Eksportujemy funkcję do logowania przez Google
+  googleLoginUser,
   logoutUser,
   updateBalance,
   getBalance,
