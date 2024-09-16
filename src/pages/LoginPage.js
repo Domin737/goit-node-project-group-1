@@ -1,6 +1,6 @@
 // src/pages/LoginPage.js
 import log from '../utils/logger';
-import Login, { handleLogin } from '../components/Login';
+import Login, { handleLogin, setupLoginForm } from '../components/Login';
 import RegisterForm, { setupRegisterForm } from '../components/RegisterForm';
 import logo from '../images/logo-big.svg';
 
@@ -40,6 +40,9 @@ export function setupAuthForms() {
 
   log('function setupAuthForms - Initialization of authorization forms');
   loginForm.addEventListener('submit', handleLogin);
+
+  // Dodajemy wywołanie setupLoginForm
+  setupLoginForm();
 
   switchToRegisterBtn.addEventListener('click', () => {
     log('function setupAuthForms - Switching to the registration form');

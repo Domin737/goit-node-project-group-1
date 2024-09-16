@@ -67,6 +67,12 @@ export async function handleLogin(event) {
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
 
+  // Prosta walidacja
+  if (!email || !password) {
+    alert('Please fill out both the email and password fields.');
+    return;
+  }
+
   try {
     log('function handleLogin - User login attempt:', email);
     const response = await fetch(`${API_URL}/users/login`, {
@@ -112,13 +118,13 @@ export default function Login() {
       
       <button type="submit" class="btn btn-primary">Log in</button>
       <button id="switch-to-register" class="btn btn-secondary">Registration</button>
-      
-      <!-- Dodaj przycisk Google -->
-      <button id="google-login-btn" class="btn btn-google">
-        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo">
-        Log in with Google
-      </button>
     </form>
+    
+    <!-- Przyciski do logowania przez Google nie są częścią formularza -->
+    <button id="google-login-btn" class="btn btn-google">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo">
+      Log in with Google
+    </button>
   `;
 }
 
@@ -127,6 +133,12 @@ export function setupLoginForm() {
   const loginForm = document.getElementById('login-form');
   const googleLoginBtn = document.getElementById('google-login-btn');
 
+  // Logowanie przy użyciu formularza (email + hasło)
   loginForm.addEventListener('submit', handleLogin);
-  googleLoginBtn.addEventListener('click', handleGoogleLogin);
+
+  // Logowanie przez Google – zapobiega wysyłaniu formularza
+  googleLoginBtn.addEventListener('click', event => {
+    event.preventDefault(); // Zapobiegamy domyślnej akcji (jeśli wciąż znajduje się w formularzu)
+    handleGoogleLogin(event); // Wywołujemy logowanie przez Google
+  });
 }
