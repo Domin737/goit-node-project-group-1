@@ -3,9 +3,11 @@ import { API_URL } from '../config';
 
 export const SummaryList = () => {
   return `
-  <h2>Summary</h2>
-  <ul id="summary-list">
-  </ul>
+  <div class="summary-list-container">
+    <h2 class="summary-title">Summary</h2>
+    <ul id="summary-list" class="summary-list">
+    </ul>
+  </div>
   `;
 };
 
@@ -27,20 +29,8 @@ export async function setupSummaryList(type) {
 function renderSummaryList(transactions) {
   log('renderSummaryList', transactions);
   const summaryList = document.getElementById('summary-list');
-  //   {
-  //     "_id": "66e6e8c26c61a0348552d130",
-  //     "user": "66e39a4d4bfbd52fa11fa891",
-  //     "type": "income",
-  //     "category": "salary",
-  //     "amount": 123,
-  //     "description": "test income",
-  //     "date": "2024-09-14T00:00:00.000Z",
-  //     "createdAt": "2024-09-15T14:01:38.910Z",
-  //     "updatedAt": "2024-09-15T14:01:38.910Z",
-  //     "__v": 0
-  // }
 
-  const mounthsNames = [
+  const monthsNames = [
     'January',
     'February',
     'March',
@@ -55,25 +45,30 @@ function renderSummaryList(transactions) {
     'December',
   ];
 
-  const mounths = new Map();
+  const months = new Map();
 
   transactions.forEach(transaction => {
     const date = new Date(transaction.date);
-    const mounthName = mounthsNames[date.getMonth()];
+    const monthName = monthsNames[date.getMonth()];
     const year = date.getFullYear();
-    const key = `${year} ${mounthName}`;
+    const key = `${year} ${monthName}`;
     const amount = transaction.amount;
 
-    if (mounths.has(key)) {
-      mounths.set(key, mounths.get(key) + amount);
+    if (months.has(key)) {
+      months.set(key, months.get(key) + amount);
     } else {
-      mounths.set(key, amount);
+      months.set(key, amount);
     }
   });
 
-  summaryList.innerHTML = [...mounths.entries()]
-    .map(mounth => {
-      return `<li>${mounth[0]} ${mounth[1]}</li>`;
+  summaryList.innerHTML = [...months.entries()]
+    .map(month => {
+      return `
+        <li>
+          <span class="month">${month[0]}</span>
+          <span class="amount">${month[1].toFixed(2)}</span>
+        </li>
+      `;
     })
     .join('');
 }

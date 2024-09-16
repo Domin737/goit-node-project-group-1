@@ -11,6 +11,7 @@
   margin-bottom: $spacing-large;
   display: flex;
   align-items: baseline;
+  justify-content: space-between;
 
   h3 {
     font-size: $font-size-large;
@@ -140,4 +141,12 @@
   display: flex;
   gap: 10px;
   justify-content: space-between;
+}
+
+#transaction-list-container {
+  width: 75%;
+}
+
+#summary-list-container {
+  width: 25%;
 }
