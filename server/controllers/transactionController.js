@@ -5,10 +5,10 @@ const User = require('../models/userModel');
 // Dodawanie nowej transakcji (wydatku lub przychodu)
 const addTransaction = async (req, res) => {
   try {
-    const { type, category, amount, description } = req.body;
+    const { type, category, amount, description, date } = req.body;
     const user = req.user;
 
-    if (!type || !category || !amount || !description) {
+    if (!type || !category || !amount || !description || !date) {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
@@ -22,6 +22,7 @@ const addTransaction = async (req, res) => {
       category,
       amount,
       description,
+      date: new Date(date), // Konwertujemy string na obiekt Date
     });
 
     // Aktualizacja bilansu użytkownika
@@ -76,7 +77,11 @@ const deleteTransaction = async (req, res) => {
 const getTransactions = async (req, res) => {
   try {
     const user = req.user;
-    const transactions = await Transaction.find({ user: user._id }).sort({
+    const query = req.query;
+    const transactions = await Transaction.find({
+      user: user._id,
+      type: query.type,
+    }).sort({
       date: -1,
     });
     res.json(transactions);

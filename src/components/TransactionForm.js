@@ -1,32 +1,56 @@
 // src/components/TransactionForm.js
+import log from '../utils/logger';
 import { API_URL } from '../config';
 import { showModal, closeModal } from './Modal';
 import { checkAndShowZeroBalanceModal } from './Balance';
 
-export function TransactionForm() {
-  console.log('Renderowanie formularza transakcji');
+const TRANSACTIONS = {
+  expense: {
+    type: 'expense',
+    categories: [
+      'Transport',
+      'Products',
+      'Health',
+      'Alcohol',
+      'Entertainment',
+      'Housing',
+      'Technique',
+      'Communication',
+      'Hobbies',
+      'Education',
+      'Other',
+    ],
+  },
+  income: {
+    type: 'income',
+    categories: ['Salary', 'Additional income'],
+  },
+};
+
+let viewType = null;
+
+export function TransactionForm(defaultType = '') {
+  log('function TransactionForm - Rendering transaction form');
   return `
     <div class="transaction-form-container">
       <h3>Add transaction</h3>
       <form id="transaction-form" class="transaction-form">
         <div class="form-group">
-          <select id="transaction-type" required>
-            <option value="">Select type</option>
-            <option value="income">Income</option>
-            <option value="expense">Expense</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <input type="text" id="transaction-category" placeholder="Category" required>
-        </div>
-        <div class="form-group">
-          <input type="number" id="transaction-amount" placeholder="Sum" step="0.01" required>
+          <input type="date" id="transaction-date" required>
         </div>
         <div class="form-group">
           <input type="text" id="transaction-description" placeholder="Description" required>
         </div>
         <div class="form-group">
-          <button type="submit" class="btn btn-primary">Add</button>
+          <select id="transaction-category" required>
+          </select>
+        </div>
+        <div class="form-group">
+          <input type="number" id="transaction-amount" placeholder="Amount" step="0.01" required>
+        </div>
+
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary">Input</button>
           <button type="reset" class="btn btn-secondary">Clear</button>
         </div>
       </form>
@@ -34,14 +58,40 @@ export function TransactionForm() {
   `;
 }
 
+export const changeTypeTransactionForm = type => {
+  const transaction = TRANSACTIONS[type];
+
+  const setCategorySelect = categories => {
+    const select = document.querySelector('#transaction-category');
+
+    select.innerHTML =
+      `<option disabled selected>Product category</option>` +
+      categories
+        .map(category => {
+          const value = category.includes(' ')
+            ? category.split(' ').join('_').toLowerCase()
+            : category.toLowerCase();
+
+          return `<option value="${value}">${category}</option>`; //<option value="additional_income">Additional income</option>
+        })
+        .join('');
+  };
+
+  viewType = transaction.type;
+  setCategorySelect(transaction.categories);
+};
+
 export function setupTransactionForm(onTransactionAdded) {
-  console.log('Inicjalizacja formularza transakcji');
+  log('function setupTransactionForm - Initializing transaction form');
   const form = document.getElementById('transaction-form');
+
+  const dateInput = form.querySelector('#transaction-date');
+  dateInput.value = new Date().toISOString().slice(0, 10);
 
   form.addEventListener('submit', async e => {
     e.preventDefault();
 
-    const type = document.getElementById('transaction-type').value;
+    const date = document.getElementById('transaction-date').value;
     const category = document.getElementById('transaction-category').value;
     const amount = parseFloat(
       document.getElementById('transaction-amount').value
@@ -50,8 +100,9 @@ export function setupTransactionForm(onTransactionAdded) {
       'transaction-description'
     ).value;
 
-    console.log('Dodawanie nowej transakcji:', {
-      type,
+    log('function setupTransactionForm - Adding new transaction:', {
+      type: viewType,
+      date,
       category,
       amount,
       description,
@@ -64,15 +115,24 @@ export function setupTransactionForm(onTransactionAdded) {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('userToken')}`,
         },
-        body: JSON.stringify({ type, category, amount, description }),
+        body: JSON.stringify({
+          type: viewType,
+          date,
+          category,
+          amount,
+          description,
+        }),
       });
 
       if (!response.ok) {
-        throw new Error('Błąd podczas dodawania transakcji');
+        throw new Error('Error while adding transaction');
       }
 
       const result = await response.json();
-      console.log('Transakcja dodana pomyślnie:', result);
+      log(
+        'function setupTransactionForm - Transaction added successfully:',
+        result
+      );
       showModal({
         message: 'Transaction added successfully',
         confirmLabel: 'OK',
@@ -84,12 +144,15 @@ export function setupTransactionForm(onTransactionAdded) {
             await onTransactionAdded(result.transaction, result.newBalance);
           }
 
-          // Sprawdź, czy nowy balans wynosi 0 i pokaż odpowiedni modal
+          // Check if new balance is 0 and show appropriate modal
           await checkAndShowZeroBalanceModal();
         },
       });
     } catch (error) {
-      console.error('Błąd podczas dodawania transakcji:', error);
+      console.error(
+        'function setupTransactionForm - Error while adding transaction:',
+        error
+      );
       showModal({
         message: 'An error occurred while adding the transaction.',
         confirmLabel: 'OK',

@@ -1,39 +1,44 @@
 // src/components/TransactionList.js
+import log from '../utils/logger';
 import { API_URL } from '../config';
 import Modal, { setupModal } from './Modal';
+import { setupSummaryList } from './SummaryList';
 
-export function TransactionList() {
-  console.log('Renderowanie listy transakcji');
+export function TransactionList({ type }) {
+  log(`TransactionList - Rendering transaction list for ${type}`);
   return `
     <div class="transaction-container">
-      <h3>List of transactions</h3>
+      <h3>List of ${type === 'income' ? 'Income' : 'Expenses'}</h3>
       <ul id="transaction-list" class="transaction-list"></ul>
     </div>
   `;
 }
 
-export async function setupTransactionList(onTransactionDeleted) {
+export async function setupTransactionList(onTransactionDeleted, type) {
   const transactionList = document.getElementById('transaction-list');
 
   async function fetchTransactions() {
-    console.log('Pobieranie listy transakcji');
+    log(`TransactionList - Fetching ${type} transactions`);
     try {
-      const response = await fetch(`${API_URL}/transactions`, {
+      const response = await fetch(`${API_URL}/transactions?type=${type}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('userToken')}`,
         },
       });
       const transactions = await response.json();
-      console.log('Pobrano transakcje:', transactions);
+      log(`TransactionList - Fetched ${type} transactions:`, transactions);
       renderTransactions(transactions);
     } catch (error) {
-      console.error('Błąd pobierania transakcji:', error);
+      console.error(
+        `TransactionList - Error fetching ${type} transactions:`,
+        error
+      );
       transactionList.innerHTML = '<li>Error loading transactions</li>';
     }
   }
 
   function renderTransactions(transactions) {
-    console.log('Renderowanie transakcji');
+    log(`TransactionList - Rendering ${type} transactions`);
     transactionList.innerHTML = transactions
       .map(
         transaction => `
@@ -43,6 +48,7 @@ export async function setupTransactionList(onTransactionDeleted) {
               transaction.type === 'income' ? '📈' : '📉'
             }</span>
             <div class="transaction-details">
+              <span class="date">${formatDate(transaction.date)}</span>
               <span class="category">${transaction.category}</span>
               <span class="description">${transaction.description}</span>
             </div>
@@ -59,14 +65,25 @@ export async function setupTransactionList(onTransactionDeleted) {
     setupDeleteButtons();
   }
 
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}.${month}.${year}`;
+  }
+
   function setupDeleteButtons() {
     const deleteButtons = document.querySelectorAll('.delete-transaction');
     deleteButtons.forEach(button => {
       button.addEventListener('click', async e => {
         const transactionId = e.target.closest('li').dataset.id;
-        console.log('Próba usunięcia transakcji o ID:', transactionId);
+        log(
+          `TransactionList - Attempting to delete ${type} transaction with ID:`,
+          transactionId
+        );
         showConfirmationModal(
-          'Are you sure you want to delete the transaction?',
+          'Are you sure you want to delete this transaction?',
           async () => {
             try {
               const response = await fetch(
@@ -82,20 +99,28 @@ export async function setupTransactionList(onTransactionDeleted) {
               );
 
               if (!response.ok) {
-                throw new Error('Błąd podczas usuwania transakcji');
+                throw new Error('Error while deleting transaction');
               }
 
               const result = await response.json();
               e.target.closest('li').remove();
-              console.log('Transakcja usunięta pomyślnie');
-              alert('Transaction deleted successfully');
+              log(`TransactionList - ${type} transaction deleted successfully`);
+              alert(
+                `${
+                  type.charAt(0).toUpperCase() + type.slice(1)
+                } transaction deleted successfully`
+              );
 
               if (onTransactionDeleted) {
                 onTransactionDeleted(result.newBalance);
               }
+              setupSummaryList(type);
             } catch (error) {
-              console.error('Błąd podczas usuwania transakcji:', error);
-              alert('An error occurred while deleting the transaction');
+              console.error(
+                `TransactionList - Error while deleting ${type} transaction:`,
+                error
+              );
+              alert(`An error occurred while deleting the ${type} transaction`);
             }
           }
         );
@@ -103,8 +128,10 @@ export async function setupTransactionList(onTransactionDeleted) {
     });
   }
 
+  // Inicjalizacja listy transakcji
   await fetchTransactions();
 
+  // Zwracamy obiekt z metodą do odświeżania listy transakcji
   return {
     refreshTransactions: fetchTransactions,
   };
@@ -114,7 +141,7 @@ function showConfirmationModal(message, confirmAction) {
   const confirmationModalContainer = document.getElementById(
     'confirmation-modal-container'
   );
-  console.log('Pokazanie modala potwierdzającego z wiadomością:', message);
+  log('TransactionList - Showing confirmation modal with message:', message);
   confirmationModalContainer.innerHTML = Modal({
     message,
     confirmLabel: 'YES',

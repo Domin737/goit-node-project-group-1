@@ -32,6 +32,25 @@
     }
   }
 
+  &-outline {
+    background-color: #fafbfd;
+    border-radius: 10px 10px 0 0;
+    cursor: pointer;
+    transition: color 0.3s, border-color 0.3s;
+
+    &:hover,
+    &:focus {
+      //background-color: $secondary-color;
+      color: $primary-color;
+      background-color: #e9ecef;
+    }
+
+    &.active {
+      color: $primary-color;
+      border-bottom: 3px solid $primary-color;
+    }
+  }
+
   &-google {
     background-color: $white;
     color: $text-color;
@@ -61,6 +80,26 @@
     &:focus {
       background-color: $secondary-color;
     }
+  }
+}
+
+.tabs {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.arrow-button {
+  padding: 5px 10px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  margin: 0 10px;
+  font-size: 18px;
+  color: $secondary-color;
+
+  &:hover {
+    color: $primary-color;
   }
 }
 

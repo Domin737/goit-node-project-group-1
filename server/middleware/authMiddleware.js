@@ -22,12 +22,16 @@ const protect = async (req, res, next) => {
       next();
     } catch (error) {
       console.error(error);
-      res.status(401).json({ message: 'No authorization, invalid token' });
+      res
+        .status(401)
+        .json({ message: 'authMiddleware - No authorization, invalid token' });
     }
   }
 
   if (!token) {
-    res.status(401).json({ message: 'No authorization, no token' });
+    res
+      .status(401)
+      .json({ message: 'authMiddleware - No authorization, no token' });
   }
 };
 

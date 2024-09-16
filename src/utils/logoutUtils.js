@@ -1,4 +1,7 @@
 // src/utils/logoutUtils.js
+import log from './logger';
+import { API_URL } from '../config';
+
 export async function handleLogout() {
   try {
     const token = localStorage.getItem('userToken');
@@ -6,7 +9,7 @@ export async function handleLogout() {
       throw new Error('No authentication token');
     }
 
-    const response = await fetch('/api/users/logout', {
+    const response = await fetch(`api/users/logout`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -28,7 +31,7 @@ export async function handleLogout() {
     // Przekierowanie na stronę logowania
     window.location.href = '/login';
   } catch (error) {
-    console.error('Error while logging out:', error);
+    console.error('function handleLogout - Error while logging out:', error);
     alert(`An error occurred while logging out: ${error.message}`);
   }
 }

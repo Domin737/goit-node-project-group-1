@@ -107,3 +107,6 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Firebase Admin Key file
+server/config/serviceAccountKey.json

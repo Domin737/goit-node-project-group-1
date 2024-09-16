@@ -8,6 +8,13 @@
   background-color: $background-color;
   display: flex;
   justify-content: center;
+
+  .login-section {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
 }
 
 .auth-form {
@@ -52,10 +59,16 @@
       margin-bottom: $spacing-small;
       font-weight: $font-weight-bold;
     }
+  }
 
-    input {
-      @include input-style;
-    }
+  input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
   }
 
   .btn-primary {

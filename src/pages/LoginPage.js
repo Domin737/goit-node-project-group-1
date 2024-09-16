@@ -1,11 +1,12 @@
 // src/pages/LoginPage.js
-import Login, { handleLogin } from '../components/Login';
+import log from '../utils/logger';
+import Login, { handleLogin, setupLoginForm } from '../components/Login';
 import RegisterForm, { setupRegisterForm } from '../components/RegisterForm';
 import logo from '../images/logo-big.svg';
 
 // Funkcja renderująca stronę logowania
 export default function LoginPage() {
-  console.log('Renderowanie strony logowania');
+  log('function LoginPage - Rendering the login page');
   return `
     <div id="auth-container" class="auth-container">
       <div id="login-section" class="login-section">
@@ -17,8 +18,13 @@ export default function LoginPage() {
         </div>
       </div>
       <div id="register-section" style="display: none;">
-        ${RegisterForm()}
-        <button id="switch-to-login">Log in</button>
+        <div class="logo">
+          <img src="${logo}" alt="Kapu$ta Logo">
+        </div>
+        <div class="auth-form">
+          ${RegisterForm()}
+          <button id="switch-to-login">Log in</button>
+        </div>
       </div>
     </div>
   `;
@@ -32,24 +38,29 @@ export function setupAuthForms() {
   const loginSection = document.getElementById('login-section');
   const registerSection = document.getElementById('register-section');
 
-  console.log('Inicjalizacja formularzy autoryzacji');
+  log('function setupAuthForms - Initialization of authorization forms');
   loginForm.addEventListener('submit', handleLogin);
 
+  // Dodajemy wywołanie setupLoginForm
+  setupLoginForm();
+
   switchToRegisterBtn.addEventListener('click', () => {
-    console.log('Przełączanie na formularz rejestracji');
+    log('function setupAuthForms - Switching to the registration form');
     loginSection.style.display = 'none';
-    registerSection.style.display = 'block';
+    registerSection.style.display = 'flex';
   });
 
   switchToLoginBtn.addEventListener('click', () => {
-    console.log('Przełączanie na formularz logowania');
+    log('function setupAuthForms - Switching to login form');
     registerSection.style.display = 'none';
-    loginSection.style.display = 'block';
+    loginSection.style.display = 'flex';
   });
 
   setupRegisterForm(() => {
-    console.log('Rejestracja zakończona pomyślnie, powrót do logowania');
+    log(
+      'function setupAuthForms - Registration completed successfully, back to login'
+    );
     registerSection.style.display = 'none';
-    loginSection.style.display = 'block';
+    loginSection.style.display = 'flex';
   });
 }

@@ -29,7 +29,7 @@ body {
 .header {
   background-color: $white;
   box-shadow: $box-shadow;
-  padding: $spacing-medium 0;
+  padding: $spacing-medium;
   display: flex;
   justify-content: space-between;
 
@@ -40,6 +40,17 @@ body {
   .logo {
     img {
       height: 40px;
+    }
+  }
+
+  .user-info {
+    display: flex;
+    gap: $spacing-medium;
+    align-items: center;
+
+    img {
+      height: 32px;
+      border-radius: 50%;
     }
   }
 
