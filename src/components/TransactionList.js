@@ -6,11 +6,14 @@ import log from '../utils/logger';
 // Importowanie stałej API_URL z konfiguracji
 import { API_URL } from '../config';
 
-// Importowanie komponentu Modal oraz funkcji setupModal
-import { Modal, setupModal } from './Modal';
+// Importowanie funkcji showModal i setupModal
+import { showModal, setupModal } from './Modal';
 
 // Importowanie funkcji setupSummaryList z komponentu SummaryList
 import { setupSummaryList } from './SummaryList';
+
+// Importowanie stałej TRANSACTIONS z TransactionForm
+import { TRANSACTIONS } from './TransactionForm';
 
 // Funkcja komponentu TransactionList, renderująca listę transakcji dla danego typu
 export function TransactionList({ type }) {
@@ -116,6 +119,19 @@ export async function setupTransactionList(onTransactionDeleted, type) {
     }
   }
 
+  // Funkcja mapująca wartości kategorii na ich oryginalne nazwy
+  function getCategoryDisplayName(type, categoryValue) {
+    const transactionCategories = TRANSACTIONS[type]?.categories || [];
+    for (const categoryName of transactionCategories) {
+      const value = categoryName.toLowerCase().split(' ').join('_');
+      if (value === categoryValue) {
+        return categoryName;
+      }
+    }
+    // Jeśli nie znaleziono, zwróć oryginalną wartość
+    return categoryValue;
+  }
+
   // Funkcja do renderowania listy transakcji w interfejsie użytkownika
   function renderTransactions(transactions) {
     log(`TransactionList - Renderowanie transakcji typu ${type}`);
@@ -123,23 +139,26 @@ export async function setupTransactionList(onTransactionDeleted, type) {
     transactionList.innerHTML = transactions
       .map(
         transaction => `
-            <li data-id="${transaction._id}">
-              <div class="transaction-info">
-                <span class="transaction-icon">${
-                  transaction.type === 'income' ? '📈' : '📉'
-                }</span>
-                <div class="transaction-details">
-                  <span class="date">${formatDate(transaction.date)}</span>
-                  <span class="category">${transaction.category}</span>
-                  <span class="description">${transaction.description}</span>
+              <li data-id="${transaction._id}">
+                <div class="transaction-info">
+                  <span class="transaction-icon">${
+                    transaction.type === 'income' ? '📈' : '📉'
+                  }</span>
+                  <div class="transaction-details">
+                    <span class="date">${formatDate(transaction.date)}</span>
+                    <span class="category">${getCategoryDisplayName(
+                      transaction.type,
+                      transaction.category
+                    )}</span>
+                    <span class="description">${transaction.description}</span>
+                  </div>
                 </div>
-              </div>
-              <span class="transaction-amount ${
-                transaction.type
-              }">${transaction.amount.toFixed(2)} EUR</span>
-              <button class="delete-transaction btn-icon">🗑️</button>
-            </li>
-          `
+                <span class="transaction-amount ${
+                  transaction.type
+                }">${transaction.amount.toFixed(2)} EUR</span>
+                <button class="delete-transaction btn-icon">🗑️</button>
+              </li>
+            `
       )
       .join('');
   }
@@ -164,36 +183,12 @@ export async function setupTransactionList(onTransactionDeleted, type) {
 
 // Funkcja do wyświetlania modalu potwierdzenia przed usunięciem transakcji
 function showConfirmationModal(message, confirmAction) {
-  // Pobranie kontenera dla modalu potwierdzenia
-  const confirmationModalContainer = document.getElementById(
-    'confirmation-modal-container'
-  );
-  log(
-    'TransactionList - Wyświetlanie modalu potwierdzenia z wiadomością:',
-    message
-  );
-  // Ustawienie zawartości modalu
-  confirmationModalContainer.innerHTML = Modal({
+  // Użycie funkcji showModal z komponentu Modal
+  showModal({
     message,
     confirmLabel: 'YES',
     cancelLabel: 'NO',
-    confirmAction: () => {
-      confirmAction();
-      confirmationModalContainer.innerHTML = '';
-    },
-    cancelAction: () => {
-      confirmationModalContainer.innerHTML = '';
-    },
+    confirmAction,
+    cancelAction: () => {},
   });
-
-  // Inicjalizacja obsługi zdarzeń dla modalu
-  setupModal(
-    () => {
-      confirmAction();
-      confirmationModalContainer.innerHTML = '';
-    },
-    () => {
-      confirmationModalContainer.innerHTML = '';
-    }
-  );
 }

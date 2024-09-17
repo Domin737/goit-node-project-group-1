@@ -83,9 +83,7 @@ export const changeTypeTransactionForm = type => {
       categories
         .map(category => {
           // Konwersja kategorii na format odpowiedni dla wartości atrybutu 'value' w elemencie option
-          const value = category.includes(' ')
-            ? category.split(' ').join('_').toLowerCase()
-            : category.toLowerCase();
+          const value = category.toLowerCase().split(' ').join('_');
 
           return `<option value="${value}">${category}</option>`;
         })
@@ -238,3 +236,6 @@ export function setupTransactionForm(onTransactionAdded) {
     }
   });
 }
+
+// Eksportowanie stałej TRANSACTIONS
+export { TRANSACTIONS };
