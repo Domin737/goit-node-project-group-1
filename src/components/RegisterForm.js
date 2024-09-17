@@ -53,21 +53,17 @@ async function handleGoogleRegister(event) {
         renderApp();
       } else {
         // Obsługa błędu podczas logowania przez Google
-        console.error(
-          'function handleGoogleRegister - Google login error:',
-          data.message || 'Unknown error'
+        console.error('Registration error:', data.message || 'Unknown error');
+        alert(
+          'An error occurred during Google registration. Please try again later.'
         );
-        alert(`Registration error: ${data.message}`);
       }
     }
   } catch (error) {
     // Obsługa wyjątku podczas rejestracji/logowania przez Google
-    console.error(
-      'function handleGoogleRegister - Error registering with Google:',
-      error
-    );
+    console.error('Registration error:', error);
     alert(
-      'There was a problem registering with Google. Please try again later.'
+      'An error occurred during Google registration. Please try again later.'
     );
   }
 }
@@ -123,7 +119,7 @@ export function setupRegisterForm(onRegisterSuccess) {
         userData.email
       );
       // Wysłanie żądania POST do endpointu rejestracji
-      const response = await fetch('/api/users/register', {
+      const response = await fetch(`${API_URL}/users/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -143,21 +139,15 @@ export function setupRegisterForm(onRegisterSuccess) {
         // Pobranie danych błędu z odpowiedzi
         const errorData = await response.json();
         // Logowanie błędu rejestracji
-        console.error(
-          'function setupRegisterForm - Registration error:',
-          errorData.message
-        );
+        console.error('Registration error:', errorData.message);
         // Wyświetlenie komunikatu o błędzie
-        alert(`Registration error: ${errorData.message}`);
+        alert('An error occurred during registration. Please try again later.');
       }
     } catch (error) {
       // Obsługa wyjątków podczas rejestracji
-      console.error(
-        'function setupRegisterForm - Error during registration:',
-        error
-      );
+      console.error('Registration error:', error);
       // Wyświetlenie komunikatu o błędzie
-      alert('An error occurred while registering. Please try again later.');
+      alert('An error occurred during registration. Please try again later.');
     }
   });
 
