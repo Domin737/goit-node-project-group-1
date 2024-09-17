@@ -6,8 +6,8 @@ import log from '../utils/logger';
 // Importowanie stałej API_URL z konfiguracji
 import { API_URL } from '../config';
 
-// Importowanie funkcji showModal i setupModal
-import { showModal, setupModal } from './Modal';
+// Importowanie funkcji showModal z komponentu Modal
+import { showModal } from './Modal';
 
 // Importowanie funkcji setupSummaryList z komponentu SummaryList
 import { setupSummaryList } from './SummaryList';
@@ -21,6 +21,17 @@ export function TransactionList({ type }) {
   return `
     <div class="transaction-container">
       <h3>List of ${type === 'income' ? 'Income' : 'Expenses'}</h3>
+      <div class="transaction-list-header">
+        <div class="transaction-info">
+          <div class="transaction-details">
+            <span class="date">DATE</span>
+            <span class="description">DESCRIPTION</span>
+            <span class="category">CATEGORY</span>
+          </div>
+        </div>
+        <span class="transaction-amount">SUM</span>
+        <span class="delete-placeholder"></span>
+      </div>
       <ul id="transaction-list" class="transaction-list"></ul>
     </div>
   `;
@@ -139,26 +150,23 @@ export async function setupTransactionList(onTransactionDeleted, type) {
     transactionList.innerHTML = transactions
       .map(
         transaction => `
-              <li data-id="${transaction._id}">
-                <div class="transaction-info">
-                  <span class="transaction-icon">${
-                    transaction.type === 'income' ? '📈' : '📉'
-                  }</span>
-                  <div class="transaction-details">
-                    <span class="date">${formatDate(transaction.date)}</span>
-                    <span class="category">${getCategoryDisplayName(
-                      transaction.type,
-                      transaction.category
-                    )}</span>
-                    <span class="description">${transaction.description}</span>
-                  </div>
+            <li data-id="${transaction._id}">
+              <div class="transaction-info">
+                <div class="transaction-details">
+                  <span class="date">${formatDate(transaction.date)}</span>
+                  <span class="description">${transaction.description}</span>
+                  <span class="category">${getCategoryDisplayName(
+                    transaction.type,
+                    transaction.category
+                  )}</span>
                 </div>
-                <span class="transaction-amount ${
-                  transaction.type
-                }">${transaction.amount.toFixed(2)} EUR</span>
-                <button class="delete-transaction btn-icon">🗑️</button>
-              </li>
-            `
+              </div>
+              <span class="transaction-amount ${
+                transaction.type
+              }">${transaction.amount.toFixed(2)} EUR</span>
+              <button class="delete-transaction btn-icon">🗑️</button>
+            </li>
+          `
       )
       .join('');
   }
