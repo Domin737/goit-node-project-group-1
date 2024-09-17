@@ -1,5 +1,8 @@
 // src/utils/logoutUtils.js
 
+// Importowanie modułu logowania
+import log from '../utils/logger';
+
 // Importowanie stałej API_URL z konfiguracji
 import { API_URL } from '../config';
 
@@ -14,6 +17,9 @@ export async function handleLogout() {
       // Jeśli token nie istnieje, rzucamy błąd
       throw new Error('No authentication token');
     }
+
+    // Logowanie wartości API_URL
+    log(`API_URL w handleLogout: ${API_URL}`);
 
     // Wysłanie żądania POST do endpointu wylogowania
     const response = await fetch(`${API_URL}/users/logout`, {
