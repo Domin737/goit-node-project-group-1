@@ -1,9 +1,18 @@
 // src/components/TransactionForm.js
+
+// Importowanie modułu logowania
 import log from '../utils/logger';
+
+// Importowanie stałej API_URL z konfiguracji
 import { API_URL } from '../config';
+
+// Importowanie funkcji showModal i closeModal z komponentu Modal
 import { showModal, closeModal } from './Modal';
+
+// Importowanie funkcji checkAndShowZeroBalanceModal z komponentu Balance
 import { checkAndShowZeroBalanceModal } from './Balance';
 
+// Definicja stałej TRANSACTIONS zawierającej typy transakcji i ich kategorie
 const TRANSACTIONS = {
   expense: {
     type: 'expense',
@@ -27,10 +36,12 @@ const TRANSACTIONS = {
   },
 };
 
+// Zmienna globalna przechowująca aktualnie wybrany typ transakcji
 let viewType = null;
 
+// Funkcja komponentu TransactionForm, renderująca formularz dodawania transakcji
 export function TransactionForm(defaultType = '') {
-  log('function TransactionForm - Rendering transaction form');
+  log('function TransactionForm - Renderowanie formularza transakcji');
   return `
     <div class="transaction-form-container">
       <h3>Add transaction</h3>
@@ -58,9 +69,12 @@ export function TransactionForm(defaultType = '') {
   `;
 }
 
+// Funkcja do zmiany typu formularza transakcji i ustawienia odpowiednich kategorii
 export const changeTypeTransactionForm = type => {
+  // Pobranie informacji o transakcji na podstawie wybranego typu
   const transaction = TRANSACTIONS[type];
 
+  // Funkcja do ustawienia opcji w polu select dla kategorii
   const setCategorySelect = categories => {
     const select = document.querySelector('#transaction-category');
 
@@ -68,29 +82,37 @@ export const changeTypeTransactionForm = type => {
       `<option disabled selected>Product category</option>` +
       categories
         .map(category => {
+          // Konwersja kategorii na format odpowiedni dla wartości atrybutu 'value' w elemencie option
           const value = category.includes(' ')
             ? category.split(' ').join('_').toLowerCase()
             : category.toLowerCase();
 
-          return `<option value="${value}">${category}</option>`; //<option value="additional_income">Additional income</option>
+          return `<option value="${value}">${category}</option>`;
         })
         .join('');
   };
 
+  // Ustawienie aktualnego typu widoku i zaktualizowanie listy kategorii
   viewType = transaction.type;
   setCategorySelect(transaction.categories);
 };
 
+// Funkcja do inicjalizacji formularza transakcji i obsługi zdarzeń
 export function setupTransactionForm(onTransactionAdded) {
-  log('function setupTransactionForm - Initializing transaction form');
+  log('function setupTransactionForm - Inicjalizacja formularza transakcji');
+
+  // Pobranie referencji do formularza
   const form = document.getElementById('transaction-form');
 
+  // Ustawienie domyślnej daty na dzisiejszą
   const dateInput = form.querySelector('#transaction-date');
   dateInput.value = new Date().toISOString().slice(0, 10);
 
+  // Dodanie obsługi zdarzenia 'submit' dla formularza
   form.addEventListener('submit', async e => {
     e.preventDefault();
 
+    // Pobranie wartości pól formularza
     const date = document.getElementById('transaction-date').value;
     const category = document.getElementById('transaction-category').value;
     const amount = parseFloat(
@@ -100,7 +122,8 @@ export function setupTransactionForm(onTransactionAdded) {
       'transaction-description'
     ).value;
 
-    log('function setupTransactionForm - Adding new transaction:', {
+    // Logowanie dodawanej transakcji
+    log('function setupTransactionForm - Dodawanie nowej transakcji:', {
       type: viewType,
       date,
       category,
@@ -109,6 +132,7 @@ export function setupTransactionForm(onTransactionAdded) {
     });
 
     try {
+      // Wysłanie żądania POST do API w celu dodania nowej transakcji
       const response = await fetch(`${API_URL}/transactions`, {
         method: 'POST',
         headers: {
@@ -124,15 +148,19 @@ export function setupTransactionForm(onTransactionAdded) {
         }),
       });
 
+      // Sprawdzenie, czy odpowiedź jest poprawna
       if (!response.ok) {
         throw new Error('Error while adding transaction');
       }
 
+      // Parsowanie odpowiedzi jako JSON
       const result = await response.json();
       log(
-        'function setupTransactionForm - Transaction added successfully:',
+        'function setupTransactionForm - Transakcja dodana pomyślnie:',
         result
       );
+
+      // Wyświetlenie modalu z potwierdzeniem dodania transakcji
       showModal({
         message: 'Transaction added successfully',
         confirmLabel: 'OK',
@@ -144,15 +172,17 @@ export function setupTransactionForm(onTransactionAdded) {
             await onTransactionAdded(result.transaction, result.newBalance);
           }
 
-          // Check if new balance is 0 and show appropriate modal
+          // Sprawdzenie, czy nowy bilans wynosi 0 i wyświetlenie odpowiedniego modalu
           await checkAndShowZeroBalanceModal();
         },
       });
     } catch (error) {
+      // Obsługa błędów podczas dodawania transakcji
       console.error(
-        'function setupTransactionForm - Error while adding transaction:',
+        'function setupTransactionForm - Błąd podczas dodawania transakcji:',
         error
       );
+      // Wyświetlenie modalu z informacją o błędzie
       showModal({
         message: 'An error occurred while adding the transaction.',
         confirmLabel: 'OK',

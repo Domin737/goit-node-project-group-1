@@ -1,12 +1,18 @@
 // src/pages/LoginPage.js
+
+// Importowanie modułu logowania
 import log from '../utils/logger';
+
+// Importowanie komponentów Login i RegisterForm oraz ich funkcji inicjalizujących
 import Login, { setupLoginForm } from '../components/Login';
 import RegisterForm, { setupRegisterForm } from '../components/RegisterForm';
+
+// Importowanie logo aplikacji
 import logo from '../images/logo-big.svg';
 
 // Funkcja renderująca stronę logowania
 export default function LoginPage() {
-  log('function LoginPage - Rendering the login page');
+  log('function LoginPage - Renderowanie strony logowania');
   return `
     <div id="auth-container" class="auth-container">
       <div id="login-section" class="login-section">
@@ -31,28 +37,30 @@ export default function LoginPage() {
 
 // Funkcja do przypisania obsługi logowania i rejestracji po załadowaniu DOM
 export function setupAuthForms() {
+  // Pobranie referencji do elementów DOM dla przycisków i sekcji
   const switchToRegisterBtn = document.getElementById('switch-to-register');
   const switchToLoginBtn = document.getElementById('switch-to-login');
   const loginSection = document.getElementById('login-section');
   const registerSection = document.getElementById('register-section');
 
-  log('function setupAuthForms - Initialization of authorization forms');
+  // Logowanie inicjalizacji formularzy autoryzacji
+  log('function setupAuthForms - Inicjalizacja formularzy autoryzacji');
 
   // Inicjalizacja formularza logowania
   setupLoginForm();
 
-  // Obsługa przełączania na formularz rejestracji
+  // Obsługa przełączania na formularz rejestracji po kliknięciu przycisku
   switchToRegisterBtn.addEventListener('click', event => {
     event.preventDefault();
-    log('function setupAuthForms - Switching to the registration form');
+    log('function setupAuthForms - Przełączanie na formularz rejestracji');
     loginSection.style.display = 'none';
     registerSection.style.display = 'flex';
   });
 
-  // Inicjalizacja formularza rejestracji
+  // Inicjalizacja formularza rejestracji z funkcją powrotną po sukcesie
   setupRegisterForm(() => {
     log(
-      'function setupAuthForms - Registration completed successfully, back to login'
+      'function setupAuthForms - Rejestracja zakończona sukcesem, powrót do logowania'
     );
     registerSection.style.display = 'none';
     loginSection.style.display = 'flex';
