@@ -1,103 +1,175 @@
-# Parcel template
+# Dokumentacja aplikacji Kapu$ta
 
-Ten projekt został stworzony przy pomocy Parcel. W celu zapoznania się i
-skonfigurowania dodatkowych opcji [zobacz dokumentację](https://parceljs.org/)
+## Spis treści
 
-## Przygotowanie nowego projektu
+1. [Opis aplikacji](#opis-aplikacji)
+2. [Technologie](#technologie)
+3. [Struktura projektu](#struktura-projektu)
+4. [Główne funkcjonalności](#główne-funkcjonalności)
+5. [Uruchamianie aplikacji](#uruchamianie-aplikacji)
+6. [Rozwój aplikacji](#rozwój-aplikacji)
 
-1. Upewnij się, że na komputerze zainstalowana jest wersja LTS Node.js.
-   [Ściągnij i zainstaluj](https://nodejs.org/en/), jeśli jest taka potrzeba.
-2. Sklonuj to repozytorium.
-3. Zmień nazwę folderu z `parcel-project-template` na nazwę swojego projektu.
-4. Utwórz nowe, puste repozytorium na GitHub.
-5. Otwórz projekt w VSCode, uruchom terminal i zwiąż projekt z repozytorium
-   GitHub
-   [zgodnie z instrukcją](https://docs.github.com/en/get-started/getting-started-with-git/managing-remote-repositories#changing-a-remote-repositorys-url).
-6. Utwórz zależność projektu w terminalu przez polecenie `npm install` .
-7. Włącz tryb edycji, wykonując polecenie `npm start`.
-8. Przejdź w przeglądarce pod adres
-   [http://localhost:1234](http://localhost:1234). Ta strona będzie się
-   automatycznie odświeżać po dokonaniu zmian w plikach projektu.
+## Opis aplikacji
 
-## Pliki i foldery
+Kapu$ta to aplikacja do zarządzania osobistymi finansami, która pomaga
+użytkownikom kontrolować swoje wydatki i przychody. Aplikacja oferuje intuicyjny
+interfejs użytkownika, umożliwiający łatwe śledzenie transakcji finansowych,
+aktualizację salda konta oraz generowanie raportów.
 
-- Wszystkie partiale plików stylów powinny znajdować się w folderze `src/sass` i
-  importować się w pliki stylów stron. Na przykład dla `index.html` plik stylów
-  nazywa się `index.scss`.
-- Obrazy dodawaj do pliku `src/images`. Moduł zbierający optymalizuje je, ale
-  tylko przy deploymencie wersji produkcyjnej projektu. Wszystko to zachodzi w
-  chmurze, aby nie obciążać twojego komputera, ponieważ na słabszym sprzęcie
-  może to zająć sporo czasu.
+## Technologie
 
-## Deployment
+Aplikacja Kapu$ta wykorzystuje następujące technologie:
 
-Aby skonfigurować deployment projektu należy wykonać kilka dodatkowych kroków
-konfigurowania twojego repozytorium. Wejdź w zakładkę `Settings` i w podsekcji
-`Actions` wybierz punkt `General`.
+- **Frontend:**
 
-![GitHub actions settings](./assets/actions-config-step-1.png)
+  - HTML5
+  - SCSS
+  - JavaScript (ES6+)
+  - Parcel (bundler)
 
-Przejdź do ostatniej sekcji, w której upewnij się, że wybrane opcje są takie
-same jak na następnym obrazku i kliknij `Save`. Bez tych ustawień w module
-zbierającym będzie zbyt mało pozwoleń dla automatyzacji procesu deploymentu.
+- **Backend:**
 
-![GitHub actions settings](./assets/actions-config-step-2.png)
+  - Node.js
+  - Express.js
+  - MongoDB (z Mongoose ORM)
 
-Wersja produkcyjna projektu będzie automatycznie gromadzić się i deployować na
-GitHub Pages w gałęzi `gh-pages` za każdym razem, gdy aktualizuje się gałąź
-`main`. Na przykład po bezpośrednim pushu lub przyjętym pull requeście. W tym
-celu niezbędne jest, aby w pliku `package.json` wyedytować pole `homepage` i
-skrypt `build`, zamieniając `your_username` i `your_repo_name` na swoje nazwy i
-wysłać zmiany na GitHub.
+- **Autentykacja:**
 
-```json
-"homepage": "https://your_username.github.io/your_repo_name/",
-"scripts": {
-  "build": "parcel build src/*.html --public-url /your_repo_name/"
-},
+  - JSON Web Tokens (JWT)
+  - Firebase Authentication (dla logowania przez Google)
+
+- **Dodatkowe narzędzia:**
+  - ESLint (linter)
+  - Jest (testy)
+  - Nodemon (dla trybu developerskiego)
+
+## Struktura projektu
+
+Projekt jest podzielony na część frontendową i backendową:
+
+```
+kapusta/
+├── server/              # Kod backendowy
+│   ├── config/          # Konfiguracja bazy danych
+│   ├── controllers/     # Kontrolery
+│   ├── middleware/      # Middleware
+│   ├── models/          # Modele danych
+│   ├── routes/          # Definicje tras API
+│   └── app.js           # Główny plik serwera
+├── src/                 # Kod frontendowy
+│   ├── components/      # Komponenty React
+│   ├── pages/           # Strony aplikacji
+│   ├── redux/           # Logika Redux
+│   ├── styles/          # Pliki SCSS
+│   ├── utils/           # Funkcje pomocnicze
+│   ├── index.html       # Główny plik HTML
+│   └── index.js         # Punkt wejścia aplikacji
+├── tests/               # Testy
+└── package.json         # Zależności i skrypty npm
 ```
 
-Dalej należy wejść w ustawienia repozytorium GitHub (`Settings` > `Pages`) i
-wystawić dystrybucję wersji produkcyjnej z folderu `/root` gałęzi `gh-pages`,
-jeśli nie zrobiło się to automatycznie.
+## Główne funkcjonalności
 
-![GitHub Pages settings](./assets/repo-settings.png)
+### 1. Autentykacja użytkownika
 
-### Status deploymentu
+- Rejestracja i logowanie poprzez email i hasło
+- Logowanie przez konto Google
+- Zabezpieczenie tras API tokenami JWT
 
-Status deploymentu ostatniego commitu wyświetla się na ikonie obok jego
-identyfikatora.
+Lokalizacja kodu: `src/components/Login.js`, `src/components/RegisterForm.js`,
+`server/controllers/userController.js`
 
-- ** Żółty kolor** - wykonuje się zbudowanie i deployment projektu.
-- ** Zielony kolor** - deployment zakończył się sukcesem.
-- ** Czerwony kolor** - w czasie lintingu, budowania lub deplymentu pojawił się
-  błąd.
+### 2. Zarządzanie saldem
 
-Więcej informacji o statusie można zobaczyć klikając na ikonkę i w wyskakującym
-oknie przejść do odnośnika `Details`.
+- Wyświetlanie aktualnego salda
+- Aktualizacja salda
+- Ostrzeżenie przy zerowym saldzie
 
-![Deployment status](./assets/status.png)
+Lokalizacja kodu: `src/components/Balance.js`,
+`server/controllers/userController.js`
 
-### Działająca strona
+### 3. Transakcje
 
-Po jakimś czasie, zazwyczaj kilku minut, działającą stronę będzie można zobaczyć
-pod adresem wskazanym w wyedytowanej właściwości `homepage`. Na przykład tu
-znajduje się odnośnik do działającej strony dla tego repozytorium
-[https://goitacademy.github.io/parcel-project-template](https://goitacademy.github.io/parcel-project-template).
+- Dodawanie przychodów i wydatków
+- Kategoryzacja transakcji
+- Lista transakcji z możliwością filtrowania
 
-Jeżeli otwiera się pusta strona, upewnij się, że w zakładce `Console` nie ma
-błędów związanych z nieprawidłowymi ścieżkami do plików projektu CSS i JS
-(**404**). Najprawdopodobniej wprowadzona została nieprawidłowa wartość
-właściwości `homepage` lub skryptu `build` w pliku `package.json`.
+Lokalizacja kodu: `src/components/TransactionForm.js`,
+`src/components/TransactionList.js`,
+`server/controllers/transactionController.js`
 
-## Jak to działa
+### 4. Raporty
 
-![How it works](./assets/how-it-works.png)
+- Generowanie raportów finansowych
+- Wizualizacja danych w formie wykresów
 
-1. Po każdym pushu w gałęzi `main` repozytorium GitHub, włącza się specjalny
-   skrypt (GitHub Action) z pliku `.github/workflows/deploy.yml`.
-2. Wszystkie pliki repozytorium kopiują się na serwer, gdzie projekt
-   inicjalizuje się i buduje przed deploymentem.
-3. Jeżeli wszystkie kroki zakończyły się sukcesem, zbudowana wersja produkcyjna
-   plików projektu wysyła się w gałąź `gh-pages`. W przeciwnym razie, w logu
-   wykonania skryptu wskazane zostanie, w czym jest problem.
+Lokalizacja kodu: `src/pages/ReportsPage.js`
+
+## Uruchamianie aplikacji
+
+Aby uruchomić aplikację Kapu$ta, wykonaj następujące kroki:
+
+1. Sklonuj repozytorium:
+
+   ```
+   git clone [URL_REPOZYTORIUM]
+   cd kapusta
+   ```
+
+2. Zainstaluj zależności:
+
+   ```
+   npm install
+   ```
+
+3. Skonfiguruj zmienne środowiskowe: Utwórz plik `.env` w głównym katalogu
+   projektu i dodaj niezbędne zmienne (np. `MONGODB_URI`, `JWT_SECRET`,
+   `FIREBASE_CONFIG`).
+
+4. Uruchom aplikację w trybie produkcyjnym:
+
+   ```
+   npm start
+   ```
+
+   Lub w trybie developerskim:
+
+   ```
+   npm run dev
+   ```
+
+5. Otwórz przeglądarkę i przejdź pod adres `http://localhost:3000` (lub inny
+   port, jeśli został skonfigurowany inaczej).
+
+## Rozwój aplikacji
+
+Aby rozwijać aplikację Kapu$ta:
+
+1. Zapoznaj się dokładnie ze strukturą projektu i istniejącym kodem.
+
+2. Używaj narzędzia ESLint do utrzymania spójności kodu:
+
+   ```
+   npm run lint
+   ```
+
+3. Pisz testy dla nowych funkcjonalności:
+
+   ```
+   npm test
+   ```
+
+4. Przed wysłaniem zmian, upewnij się, że wszystkie testy przechodzą i kod jest
+   sformatowany zgodnie z przyjętymi standardami.
+
+5. Używaj systemu kontroli wersji (Git) do śledzenia zmian i tworzenia gałęzi
+   dla nowych funkcjonalności.
+
+6. Regularnie aktualizuj dokumentację, aby odzwierciedlała bieżący stan
+   projektu.
+
+---
+
+Ta dokumentacja będzie regularnie aktualizowana wraz z rozwojem aplikacji
+Kapu$ta. Jeśli zauważysz jakiekolwiek nieścisłości lub masz sugestie dotyczące
+ulepszeń, prosimy o kontakt z zespołem deweloperskim.

@@ -1,6 +1,6 @@
 // src/pages/LoginPage.js
 import log from '../utils/logger';
-import Login, { handleLogin, setupLoginForm } from '../components/Login';
+import Login, { setupLoginForm } from '../components/Login';
 import RegisterForm, { setupRegisterForm } from '../components/RegisterForm';
 import logo from '../images/logo-big.svg';
 
@@ -17,13 +17,12 @@ export default function LoginPage() {
           ${Login()}
         </div>
       </div>
-      <div id="register-section" style="display: none;">
+      <div id="register-section" class="register-section" style="display: none;">
         <div class="logo">
           <img src="${logo}" alt="Kapu$ta Logo">
         </div>
         <div class="auth-form">
           ${RegisterForm()}
-          <button id="switch-to-login">Log in</button>
         </div>
       </div>
     </div>
@@ -32,30 +31,25 @@ export default function LoginPage() {
 
 // Funkcja do przypisania obsługi logowania i rejestracji po załadowaniu DOM
 export function setupAuthForms() {
-  const loginForm = document.getElementById('login-form');
   const switchToRegisterBtn = document.getElementById('switch-to-register');
   const switchToLoginBtn = document.getElementById('switch-to-login');
   const loginSection = document.getElementById('login-section');
   const registerSection = document.getElementById('register-section');
 
   log('function setupAuthForms - Initialization of authorization forms');
-  loginForm.addEventListener('submit', handleLogin);
 
-  // Dodajemy wywołanie setupLoginForm
+  // Inicjalizacja formularza logowania
   setupLoginForm();
 
-  switchToRegisterBtn.addEventListener('click', () => {
+  // Obsługa przełączania na formularz rejestracji
+  switchToRegisterBtn.addEventListener('click', event => {
+    event.preventDefault();
     log('function setupAuthForms - Switching to the registration form');
     loginSection.style.display = 'none';
     registerSection.style.display = 'flex';
   });
 
-  switchToLoginBtn.addEventListener('click', () => {
-    log('function setupAuthForms - Switching to login form');
-    registerSection.style.display = 'none';
-    loginSection.style.display = 'flex';
-  });
-
+  // Inicjalizacja formularza rejestracji
   setupRegisterForm(() => {
     log(
       'function setupAuthForms - Registration completed successfully, back to login'

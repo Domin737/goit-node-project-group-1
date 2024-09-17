@@ -117,10 +117,10 @@ export default function Login() {
         </button>
       </div>
       <label for="email">Email:</label>
-      <input type="email" id="email" required />
+      <input type="email" id="email" name="email" required />
       
       <label for="password">Password:</label>
-      <input type="password" id="password" required />
+      <input type="password" id="password" name="password" required />
       
       <button type="submit" class="btn btn-primary">Log in</button>
       <button id="switch-to-register" class="btn btn-secondary">Registration</button>

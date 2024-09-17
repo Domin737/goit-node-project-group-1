@@ -21,6 +21,19 @@
       justify-content: center;
     }
   }
+
+  .register-section {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+
+    .google-section {
+      display: flex;
+      justify-content: center;
+    }
+  }
 }
 
 .auth-form {
