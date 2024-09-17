@@ -79,7 +79,7 @@ export const changeTypeTransactionForm = type => {
     const select = document.querySelector('#transaction-category');
 
     select.innerHTML =
-      `<option disabled selected>Product category</option>` +
+      `<option disabled selected value="">Product category</option>` +
       categories
         .map(category => {
           // Konwersja kategorii na format odpowiedni dla wartości atrybutu 'value' w elemencie option
@@ -108,19 +108,61 @@ export function setupTransactionForm(onTransactionAdded) {
   const dateInput = form.querySelector('#transaction-date');
   dateInput.value = new Date().toISOString().slice(0, 10);
 
+  // Dodanie walidacji w czasie rzeczywistym dla pola kwoty
+  const amountInput = form.querySelector('#transaction-amount');
+  amountInput.addEventListener('input', () => {
+    const value = parseFloat(amountInput.value);
+    if (isNaN(value) || value <= 0) {
+      amountInput.setCustomValidity('Amount must be greater than zero.');
+    } else {
+      amountInput.setCustomValidity('');
+    }
+  });
+
+  // Dodanie walidacji dla pola opisu
+  const descriptionInput = form.querySelector('#transaction-description');
+  descriptionInput.addEventListener('input', () => {
+    if (descriptionInput.value.trim() === '') {
+      descriptionInput.setCustomValidity('Description is required.');
+    } else {
+      descriptionInput.setCustomValidity('');
+    }
+  });
+
+  // Dodanie walidacji dla pola kategorii
+  const categorySelect = form.querySelector('#transaction-category');
+  categorySelect.addEventListener('change', () => {
+    if (categorySelect.value === '') {
+      categorySelect.setCustomValidity('Please select a category.');
+    } else {
+      categorySelect.setCustomValidity('');
+    }
+  });
+
+  // Dodanie walidacji dla pola daty
+  dateInput.addEventListener('change', () => {
+    if (!dateInput.value) {
+      dateInput.setCustomValidity('Please select a date.');
+    } else {
+      dateInput.setCustomValidity('');
+    }
+  });
+
   // Dodanie obsługi zdarzenia 'submit' dla formularza
   form.addEventListener('submit', async e => {
     e.preventDefault();
 
+    // Sprawdzenie poprawności formularza
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
     // Pobranie wartości pól formularza
-    const date = document.getElementById('transaction-date').value;
-    const category = document.getElementById('transaction-category').value;
-    const amount = parseFloat(
-      document.getElementById('transaction-amount').value
-    );
-    const description = document.getElementById(
-      'transaction-description'
-    ).value;
+    const date = dateInput.value;
+    const category = categorySelect.value;
+    const amount = parseFloat(amountInput.value);
+    const description = descriptionInput.value.trim();
 
     // Logowanie dodawanej transakcji
     log('function setupTransactionForm - Dodawanie nowej transakcji:', {
@@ -168,6 +210,9 @@ export function setupTransactionForm(onTransactionAdded) {
           closeModal();
           form.reset();
 
+          // Po resetowaniu formularza, ustawiamy domyślną datę na dzisiejszą
+          dateInput.value = new Date().toISOString().slice(0, 10);
+
           if (onTransactionAdded) {
             await onTransactionAdded(result.transaction, result.newBalance);
           }
@@ -186,7 +231,9 @@ export function setupTransactionForm(onTransactionAdded) {
       showModal({
         message: 'An error occurred while adding the transaction.',
         confirmLabel: 'OK',
-        confirmAction: () => {},
+        confirmAction: () => {
+          closeModal();
+        },
       });
     }
   });
