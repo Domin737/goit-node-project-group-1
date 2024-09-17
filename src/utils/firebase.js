@@ -4,11 +4,6 @@
 import { initializeApp } from 'firebase/app';
 // Importowanie funkcji autoryzacji z Firebase SDK
 import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
-// Importowanie modułu dotenv do obsługi zmiennych środowiskowych
-import dotenv from 'dotenv';
-
-// Wczytanie zmiennych środowiskowych z pliku .env
-dotenv.config();
 
 // Konfiguracja Firebase przy użyciu zmiennych środowiskowych
 const firebaseConfig = {
