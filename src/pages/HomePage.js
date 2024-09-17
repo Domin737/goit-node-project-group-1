@@ -41,9 +41,6 @@ import logo from '../images/logo-small.svg';
 // Importowanie komponentów listy podsumowania
 import { SummaryList, setupSummaryList } from '../components/SummaryList';
 
-// Importowanie funkcji 'set' z biblioteki mongoose (może być nieużywane)
-import { set } from 'mongoose';
-
 // Funkcja komponentu HomePage, renderująca stronę główną aplikacji
 export default function HomePage() {
   log('HomePage - Renderowanie strony głównej');
@@ -77,91 +74,6 @@ export default function HomePage() {
   `;
 }
 
-// Funkcja do konfiguracji zakładek na stronie głównej
-const setupTabs = () => {
-  log('HomePage - Konfiguracja zakładek');
-
-  // Pobranie referencji do przycisków zakładek
-  const tabButtons = document.querySelectorAll('.tab-button');
-
-  // Pobranie referencji do kontenera listy transakcji
-  const transactionListContainer = document.getElementById(
-    'transaction-list-container'
-  );
-
-  // Pobranie referencji do kontenera listy podsumowania
-  const summaryListContainer = document.querySelector(
-    '#summary-list-container'
-  );
-
-  // Funkcja asynchroniczna do aktualizacji listy transakcji dla danego typu
-  const updateTransactionList = async type => {
-    log(`HomePage - Aktualizacja listy transakcji dla ${type}`);
-
-    // Renderowanie komponentu listy transakcji
-    transactionListContainer.innerHTML = TransactionList({ type });
-
-    // Renderowanie komponentu listy podsumowania
-    summaryListContainer.innerHTML = SummaryList();
-
-    // Inicjalizacja listy transakcji
-    await setupTransactionList(async newBalance => {
-      log(`HomePage - Zaktualizowano listę ${type}, nowy bilans:`, newBalance);
-      await balanceSetup.updateBalance(newBalance);
-    }, type);
-
-    // Inicjalizacja listy podsumowania
-    setupSummaryList(type);
-
-    // Zmiana typu w formularzu transakcji
-    changeTypeTransactionForm(type);
-  };
-
-  // Funkcja do przełączania aktywnej zakładki
-  const switchTab = newTab => {
-    // Usunięcie klasy 'active' ze wszystkich przycisków zakładek
-    tabButtons.forEach(btn => btn.classList.remove('active'));
-
-    // Dodanie klasy 'active' do wybranego przycisku
-    const activeButton = document.querySelector(`[data-tab="${newTab}"]`);
-    activeButton.classList.add('active');
-
-    // Aktualizacja listy transakcji dla nowej zakładki
-    updateTransactionList(newTab);
-  };
-
-  // Dodanie obsługi kliknięcia dla przycisków zakładek
-  tabButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      const tabType = button.getAttribute('data-tab');
-      log(`HomePage - Kliknięto zakładkę ${tabType}`);
-      switchTab(tabType);
-    });
-  });
-
-  // Obsługa przycisków strzałek do przełączania zakładek
-  document.getElementById('arrow-left').addEventListener('click', () => {
-    const currentActive = document.querySelector('.tab-button.active');
-    const newTab =
-      currentActive.getAttribute('data-tab') === 'income'
-        ? 'expense'
-        : 'income';
-    switchTab(newTab);
-  });
-
-  document.getElementById('arrow-right').addEventListener('click', () => {
-    const currentActive = document.querySelector('.tab-button.active');
-    const newTab =
-      currentActive.getAttribute('data-tab') === 'expense'
-        ? 'income'
-        : 'expense';
-    switchTab(newTab);
-  });
-
-  // Zwracanie funkcji aktualizującej listę transakcji
-  return updateTransactionList;
-};
-
 // Zmienna globalna do przechowywania konfiguracji bilansu
 let balanceSetup;
 
@@ -172,8 +84,8 @@ export async function setupHomePage() {
   // Inicjalizacja bilansu
   balanceSetup = await setupBalance();
 
-  // Konfiguracja zakładek i pobranie funkcji aktualizującej listę transakcji
-  const updateTransactionList = setupTabs();
+  // Konfiguracja zakładek
+  setupTabs();
 
   // Konfiguracja formularza transakcji i obsługa dodawania nowej transakcji
   setupTransactionForm(async (transaction, newBalance) => {
@@ -204,6 +116,91 @@ export async function setupHomePage() {
 
   // Pobranie informacji o bieżącym użytkowniku (avatar i nazwa)
   await loadUserInfo();
+}
+
+// Funkcja do konfiguracji zakładek na stronie głównej
+function setupTabs() {
+  log('HomePage - Konfiguracja zakładek');
+
+  // Pobranie referencji do przycisków zakładek
+  const tabButtons = document.querySelectorAll('.tab-button');
+
+  // Dodanie obsługi kliknięcia dla przycisków zakładek
+  tabButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const tabType = button.getAttribute('data-tab');
+      log(`HomePage - Kliknięto zakładkę ${tabType}`);
+      switchTab(tabType);
+    });
+  });
+
+  // Obsługa przycisków strzałek do przełączania zakładek
+  document.getElementById('arrow-left').addEventListener('click', () => {
+    const currentActive = document.querySelector('.tab-button.active');
+    const newTab =
+      currentActive.getAttribute('data-tab') === 'income'
+        ? 'expense'
+        : 'income';
+    switchTab(newTab);
+  });
+
+  document.getElementById('arrow-right').addEventListener('click', () => {
+    const currentActive = document.querySelector('.tab-button.active');
+    const newTab =
+      currentActive.getAttribute('data-tab') === 'expense'
+        ? 'income'
+        : 'expense';
+    switchTab(newTab);
+  });
+}
+
+// Funkcja do przełączania aktywnej zakładki
+function switchTab(newTab) {
+  // Pobranie referencji do przycisków zakładek
+  const tabButtons = document.querySelectorAll('.tab-button');
+
+  // Usunięcie klasy 'active' ze wszystkich przycisków zakładek
+  tabButtons.forEach(btn => btn.classList.remove('active'));
+
+  // Dodanie klasy 'active' do wybranego przycisku
+  const activeButton = document.querySelector(`[data-tab="${newTab}"]`);
+  activeButton.classList.add('active');
+
+  // Aktualizacja listy transakcji dla nowej zakładki
+  updateTransactionList(newTab);
+}
+
+// Funkcja asynchroniczna do aktualizacji listy transakcji dla danego typu
+async function updateTransactionList(type) {
+  log(`HomePage - Aktualizacja listy transakcji dla ${type}`);
+
+  // Pobranie referencji do kontenera listy transakcji
+  const transactionListContainer = document.getElementById(
+    'transaction-list-container'
+  );
+
+  // Pobranie referencji do kontenera listy podsumowania
+  const summaryListContainer = document.querySelector(
+    '#summary-list-container'
+  );
+
+  // Renderowanie komponentu listy transakcji
+  transactionListContainer.innerHTML = TransactionList({ type });
+
+  // Renderowanie komponentu listy podsumowania
+  summaryListContainer.innerHTML = SummaryList();
+
+  // Inicjalizacja listy transakcji
+  await setupTransactionList(async newBalance => {
+    log(`HomePage - Zaktualizowano listę ${type}, nowy bilans:`, newBalance);
+    await balanceSetup.updateBalance(newBalance);
+  }, type);
+
+  // Inicjalizacja listy podsumowania
+  setupSummaryList(type);
+
+  // Zmiana typu w formularzu transakcji
+  changeTypeTransactionForm(type);
 }
 
 // Funkcja asynchroniczna do pobrania informacji o aktualnym użytkowniku
