@@ -28,6 +28,68 @@ export async function setupTransactionList(onTransactionDeleted, type) {
   // Pobranie referencji do elementu listy transakcji w DOM
   const transactionList = document.getElementById('transaction-list');
 
+  // Dodanie pojedynczego nasłuchiwacza zdarzeń 'click' do transactionList (delegacja zdarzeń)
+  transactionList.addEventListener('click', async e => {
+    if (e.target.classList.contains('delete-transaction')) {
+      // Pobranie ID transakcji z atrybutu 'data-id' elementu listy
+      const transactionId = e.target.closest('li').dataset.id;
+      log(
+        `TransactionList - Próba usunięcia transakcji typu ${type} o ID:`,
+        transactionId
+      );
+      // Wyświetlenie modalu potwierdzającego usunięcie transakcji
+      showConfirmationModal(
+        'Are you sure you want to delete this transaction?',
+        async () => {
+          try {
+            // Wysłanie żądania DELETE do API w celu usunięcia transakcji
+            const response = await fetch(
+              `${API_URL}/transactions/${transactionId}`,
+              {
+                method: 'DELETE',
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem('userToken')}`,
+                },
+              }
+            );
+
+            // Sprawdzenie, czy odpowiedź jest poprawna
+            if (!response.ok) {
+              throw new Error('Error while deleting transaction');
+            }
+
+            // Parsowanie odpowiedzi jako JSON
+            const result = await response.json();
+            // Usunięcie elementu transakcji z listy w interfejsie użytkownika
+            e.target.closest('li').remove();
+            log(`TransactionList - Transakcja typu ${type} usunięta pomyślnie`);
+            // Wyświetlenie komunikatu potwierdzającego usunięcie
+            alert(
+              `${
+                type.charAt(0).toUpperCase() + type.slice(1)
+              } transaction deleted successfully`
+            );
+
+            // Wywołanie funkcji callback po usunięciu transakcji
+            if (onTransactionDeleted) {
+              onTransactionDeleted(result.newBalance);
+            }
+            // Aktualizacja listy podsumowania
+            setupSummaryList(type);
+          } catch (error) {
+            // Obsługa błędów podczas usuwania transakcji
+            console.error(
+              `TransactionList - Błąd podczas usuwania transakcji typu ${type}:`,
+              error
+            );
+            // Wyświetlenie komunikatu o błędzie
+            alert(`An error occurred while deleting the ${type} transaction`);
+          }
+        }
+      );
+    }
+  });
+
   // Funkcja asynchroniczna do pobierania transakcji z API
   async function fetchTransactions() {
     log(`TransactionList - Pobieranie transakcji typu ${type}`);
@@ -80,9 +142,6 @@ export async function setupTransactionList(onTransactionDeleted, type) {
           `
       )
       .join('');
-
-    // Inicjalizacja przycisków usuwania po renderowaniu listy
-    setupDeleteButtons();
   }
 
   // Funkcja do formatowania daty w formacie DD.MM.RRRR
@@ -92,77 +151,6 @@ export async function setupTransactionList(onTransactionDeleted, type) {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
     return `${day}.${month}.${year}`;
-  }
-
-  // Funkcja do inicjalizacji obsługi przycisków usuwania transakcji
-  function setupDeleteButtons() {
-    // Pobranie wszystkich przycisków usuwania z listy transakcji
-    const deleteButtons = document.querySelectorAll('.delete-transaction');
-    deleteButtons.forEach(button => {
-      // Dodanie obsługi zdarzenia 'click' dla każdego przycisku usuwania
-      button.addEventListener('click', async e => {
-        // Pobranie ID transakcji z atrybutu 'data-id' elementu listy
-        const transactionId = e.target.closest('li').dataset.id;
-        log(
-          `TransactionList - Próba usunięcia transakcji typu ${type} o ID:`,
-          transactionId
-        );
-        // Wyświetlenie modalu potwierdzającego usunięcie transakcji
-        showConfirmationModal(
-          'Are you sure you want to delete this transaction?',
-          async () => {
-            try {
-              // Wysłanie żądania DELETE do API w celu usunięcia transakcji
-              const response = await fetch(
-                `${API_URL}/transactions/${transactionId}`,
-                {
-                  method: 'DELETE',
-                  headers: {
-                    Authorization: `Bearer ${localStorage.getItem(
-                      'userToken'
-                    )}`,
-                  },
-                }
-              );
-
-              // Sprawdzenie, czy odpowiedź jest poprawna
-              if (!response.ok) {
-                throw new Error('Error while deleting transaction');
-              }
-
-              // Parsowanie odpowiedzi jako JSON
-              const result = await response.json();
-              // Usunięcie elementu transakcji z listy w interfejsie użytkownika
-              e.target.closest('li').remove();
-              log(
-                `TransactionList - Transakcja typu ${type} usunięta pomyślnie`
-              );
-              // Wyświetlenie komunikatu potwierdzającego usunięcie
-              alert(
-                `${
-                  type.charAt(0).toUpperCase() + type.slice(1)
-                } transaction deleted successfully`
-              );
-
-              // Wywołanie funkcji callback po usunięciu transakcji
-              if (onTransactionDeleted) {
-                onTransactionDeleted(result.newBalance);
-              }
-              // Aktualizacja listy podsumowania
-              setupSummaryList(type);
-            } catch (error) {
-              // Obsługa błędów podczas usuwania transakcji
-              console.error(
-                `TransactionList - Błąd podczas usuwania transakcji typu ${type}:`,
-                error
-              );
-              // Wyświetlenie komunikatu o błędzie
-              alert(`An error occurred while deleting the ${type} transaction`);
-            }
-          }
-        );
-      });
-    });
   }
 
   // Inicjalizacja listy transakcji przy pierwszym załadowaniu
