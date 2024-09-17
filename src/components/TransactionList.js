@@ -7,7 +7,7 @@ import log from '../utils/logger';
 import { API_URL } from '../config';
 
 // Importowanie komponentu Modal oraz funkcji setupModal
-import Modal, { setupModal } from './Modal';
+import { Modal, setupModal } from './Modal';
 
 // Importowanie funkcji setupSummaryList z komponentu SummaryList
 import { setupSummaryList } from './SummaryList';

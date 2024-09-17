@@ -3,8 +3,8 @@
 // Importowanie modułu logowania
 import log from '../utils/logger';
 
-// Domyślny eksport funkcji Modal, która tworzy szablon modalu z przekazanymi opcjami
-export default function Modal({
+// Funkcja Modal, która tworzy szablon modalu z przekazanymi opcjami
+function Modal({
   message,
   confirmAction,
   confirmLabel = 'YES',
@@ -35,8 +35,8 @@ export default function Modal({
   `;
 }
 
-// Eksport funkcji setupModal do inicjalizacji obsługi zdarzeń modalu
-export function setupModal(confirmAction, cancelAction = null) {
+// Funkcja do inicjalizacji obsługi zdarzeń modalu
+function setupModal(confirmAction, cancelAction = null) {
   // Pobranie referencji do przycisków w modalnym oknie
   const confirmBtn = document.getElementById('modal-confirm-btn');
   const closeBtn = document.getElementById('modal-close-btn');
@@ -68,8 +68,8 @@ export function setupModal(confirmAction, cancelAction = null) {
   setupOutsideClickModal();
 }
 
-// Eksport funkcji closeModal do zamykania modalu
-export function closeModal() {
+// Funkcja do zamykania modalu
+function closeModal() {
   // Logowanie zamknięcia modalu
   log('function closeModal - Zamknięcie modalu');
   const modalOverlay = document.querySelector('.modal-overlay');
@@ -91,8 +91,8 @@ function setupOutsideClickModal() {
   });
 }
 
-// Eksport funkcji showModal do wyświetlania modalu z podanymi opcjami
-export function showModal(options) {
+// Funkcja do wyświetlania modalu z podanymi opcjami
+function showModal(options) {
   // Logowanie wyświetlania modalu z opcjami
   log('function showModal - Wyświetlanie modalu z opcjami:', options);
   // Tworzenie kontenera na modal
@@ -104,3 +104,6 @@ export function showModal(options) {
   // Inicjalizacja obsługi zdarzeń dla modalu
   setupModal(options.confirmAction, options.cancelAction);
 }
+
+// Eksportowanie funkcji jako nazwanych eksportów
+export { Modal, setupModal, closeModal, showModal };
