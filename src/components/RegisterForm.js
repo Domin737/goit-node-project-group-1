@@ -1,19 +1,25 @@
 // src/components/RegisterForm.js
+
+// Importowanie modułu logowania
 import log from '../utils/logger';
+
+// Importowanie stałych i funkcji z innych modułów
 import { API_URL } from '../config';
 import { renderApp } from '../index';
 import { signInWithGoogle } from '../utils/firebase'; // Import funkcji logowania przez Google
 
 // Funkcja do obsługi rejestracji/logowania przez Google
 async function handleGoogleRegister(event) {
+  // Zapobieganie domyślnemu zachowaniu formularza
   event.preventDefault();
 
   try {
+    // Logowanie próby rejestracji/logowania przez Google
     log(
       'function handleGoogleRegister - User attempting to register/login with Google'
     );
 
-    // Wywołaj funkcję logowania przez Google
+    // Wywołanie funkcji logowania przez Google
     const user = await signInWithGoogle();
 
     if (user) {
@@ -23,47 +29,50 @@ async function handleGoogleRegister(event) {
         user
       );
 
-      // Pobierz token Firebase
+      // Pobranie tokena Firebase od zalogowanego użytkownika
       const token = await user.getIdToken();
 
-      // Wyślij token na backend
+      // Wysłanie tokena na backend w celu uwierzytelnienia lub rejestracji
       const response = await fetch(`${API_URL}/users/google-login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        // Przekazanie tokena w ciele żądania
         body: JSON.stringify({ token }),
       });
 
+      // Parsowanie odpowiedzi z serwera
       const data = await response.json();
 
       if (response.ok) {
-        // Zapisz token w localStorage
+        // Zapisanie tokena JWT w localStorage
         localStorage.setItem('userToken', data.token);
 
-        // Przerysuj aplikację po zalogowaniu
+        // Przerysowanie aplikacji po zalogowaniu
         renderApp();
       } else {
-        console.error(
-          'function handleGoogleRegister - Google login error:',
-          data.message || 'Unknown error'
+        // Obsługa błędu podczas logowania przez Google
+        console.error('Registration error:', data.message || 'Unknown error');
+        alert(
+          'An error occurred during Google registration. Please try again later.'
         );
-        alert(`Registration error: ${data.message}`);
       }
     }
   } catch (error) {
-    console.error(
-      'function handleGoogleRegister - Error registering with Google:',
-      error
-    );
+    // Obsługa wyjątku podczas rejestracji/logowania przez Google
+    console.error('Registration error:', error);
     alert(
-      'There was a problem registering with Google. Please try again later.'
+      'An error occurred during Google registration. Please try again later.'
     );
   }
 }
 
+// Domyślny eksport funkcji renderującej formularz rejestracji
 export default function RegisterForm() {
+  // Logowanie renderowania formularza rejestracji
   log('function RegisterForm - Rendering of registration form');
+  // Zwracanie szablonu HTML formularza
   return `
     <form id="register-form">
       <div class="google-section">
@@ -87,62 +96,80 @@ export default function RegisterForm() {
   `;
 }
 
+// Funkcja do inicjalizacji formularza rejestracji po załadowaniu DOM
 export function setupRegisterForm(onRegisterSuccess) {
+  // Pobranie referencji do formularza rejestracji
   const form = document.getElementById('register-form');
+  // Logowanie inicjalizacji formularza rejestracji
   log('function setupRegisterForm - Initializing the registration form');
 
+  // Dodanie obsługi zdarzenia 'submit' dla formularza
   form.addEventListener('submit', async e => {
+    // Zapobieganie domyślnemu zachowaniu formularza
     e.preventDefault();
+    // Utworzenie obiektu FormData z formularza
     const formData = new FormData(form);
+    // Konwersja FormData do zwykłego obiektu
     const userData = Object.fromEntries(formData.entries());
 
     try {
+      // Logowanie próby rejestracji użytkownika
       log(
         'function setupRegisterForm - User registration attempt:',
         userData.email
       );
-      const response = await fetch('/api/users/register', {
+      // Wysłanie żądania POST do endpointu rejestracji
+      const response = await fetch(`${API_URL}/users/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        // Przekazanie danych użytkownika w ciele żądania
         body: JSON.stringify(userData),
       });
 
       if (response.ok) {
+        // Logowanie pomyślnego zakończenia rejestracji
         log('function setupRegisterForm - Registration completed successfully');
+        // Wyświetlenie komunikatu o sukcesie
         alert('Registration successful! You can now log in.');
+        // Wywołanie funkcji po pomyślnej rejestracji
         onRegisterSuccess();
       } else {
+        // Pobranie danych błędu z odpowiedzi
         const errorData = await response.json();
-        console.error(
-          'function setupRegisterForm - Registration error:',
-          errorData.message
-        );
-        alert(`Registration error: ${errorData.message}`);
+        // Logowanie błędu rejestracji
+        console.error('Registration error:', errorData.message);
+        // Wyświetlenie komunikatu o błędzie
+        alert('An error occurred during registration. Please try again later.');
       }
     } catch (error) {
-      console.error(
-        'function setupRegisterForm - Error during registration:',
-        error
-      );
-      alert('An error occurred while registering. Please try again later.');
+      // Obsługa wyjątków podczas rejestracji
+      console.error('Registration error:', error);
+      // Wyświetlenie komunikatu o błędzie
+      alert('An error occurred during registration. Please try again later.');
     }
   });
 
-  // Obsługa przycisku logowania przez Google
+  // Obsługa przycisku rejestracji przez Google
   const googleRegisterBtn = document.getElementById('google-register-btn');
   googleRegisterBtn.addEventListener('click', event => {
+    // Zapobieganie domyślnemu zachowaniu
     event.preventDefault();
+    // Wywołanie funkcji obsługującej rejestrację przez Google
     handleGoogleRegister(event);
   });
 
-  // Obsługa przycisku przełączania na logowanie
+  // Obsługa przycisku przełączania na formularz logowania
   const switchToLoginBtn = document.getElementById('switch-to-login');
   switchToLoginBtn.addEventListener('click', event => {
+    // Zapobieganie domyślnemu zachowaniu
     event.preventDefault();
+    // Logowanie przełączania na formularz logowania
     log('function setupRegisterForm - Switching to login form');
+    // Ukrycie sekcji rejestracji
     document.getElementById('register-section').style.display = 'none';
+    // Wyświetlenie sekcji logowania
     document.getElementById('login-section').style.display = 'flex';
   });
 }

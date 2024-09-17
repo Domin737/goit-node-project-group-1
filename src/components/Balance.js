@@ -1,11 +1,16 @@
 // src/components/Balance.js
+
+// Importowanie modułu logowania
 import log from '../utils/logger';
+// Importowanie stałej API_URL z konfiguracji
 import { API_URL } from '../config';
+// Importowanie funkcji showModal i closeModal z komponentu Modal
 import { showModal, closeModal } from './Modal';
 
+// Funkcja do wyświetlania modalnego okna potwierdzenia
 function showConfirmationModal(message, confirmAction) {
   log(
-    'function showConfirmationModal - Showing confirmation modal with message:',
+    'function showConfirmationModal - Wyświetlanie modalu potwierdzenia z wiadomością:',
     message
   );
   showModal({
@@ -13,17 +18,18 @@ function showConfirmationModal(message, confirmAction) {
     confirmLabel: 'YES',
     cancelLabel: 'NO',
     confirmAction: () => {
-      log('function showConfirmationModal [showModal] - Action confirmed');
+      log('function showConfirmationModal [showModal] - Akcja potwierdzona');
       confirmAction();
     },
     cancelAction: () => {
-      log('function showConfirmationModal [showModal] - Action canceled');
+      log('function showConfirmationModal [showModal] - Akcja anulowana');
     },
   });
 }
 
+// Funkcja komponentu Balance, renderująca widok salda
 export function Balance() {
-  log('function Balance - Rendering the Balance component');
+  log('function Balance - Renderowanie komponentu Balance');
   return `
     <div class="balance-container">
       <h2>BALANCE</h2>
@@ -57,35 +63,43 @@ export function Balance() {
   `;
 }
 
+// Funkcja asynchroniczna do pobierania aktualnego salda z API
 export async function fetchBalance() {
-  log('function fetchBalance - Balance download started');
+  log('function fetchBalance - Rozpoczęto pobieranie salda');
   const balanceAmount = document.getElementById('balance-amount');
   try {
+    // Wysłanie żądania do API w celu pobrania salda użytkownika
     const response = await fetch(`${API_URL}/users/balance`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('userToken')}`,
       },
     });
+    // Parsowanie odpowiedzi jako JSON
     const data = await response.json();
-    log('function fetchBalance - Balance data downloaded:', data);
+    log('function fetchBalance - Pobieranie danych salda zakończone:', data);
     if (balanceAmount) {
+      // Aktualizacja tekstu elementu wyświetlającego saldo
       balanceAmount.textContent = `${data.balance.toFixed(2)} EUR`;
     }
+    // Zwrócenie wartości salda
     return data.balance;
   } catch (error) {
+    // Obsługa błędów podczas pobierania salda
     console.error(
-      'function fetchBalance - Error while downloading balance:',
+      'function fetchBalance - Błąd podczas pobierania salda:',
       error
     );
     if (balanceAmount) {
-      balanceAmount.textContent = 'Error while loading balance';
+      balanceAmount.textContent = 'Błąd podczas ładowania salda';
     }
     return null;
   }
 }
 
+// Funkcja asynchroniczna do inicjalizacji komponentu Balance
 export async function setupBalance() {
-  log('function setupBalance - Balance Initialization');
+  log('function setupBalance - Inicjalizacja salda');
+  // Pobranie referencji do elementów DOM
   const balanceAmount = document.getElementById('balance-amount');
   const updateBalanceBtn = document.getElementById('update-balance-btn');
   const showReportsBtn = document.getElementById('show-reports-btn');
@@ -96,9 +110,10 @@ export async function setupBalance() {
     balanceFormContainer.querySelector('#cancel-balance');
   const newBalanceInput = balanceFormContainer.querySelector('#new-balance');
 
+  // Sprawdzenie, czy wszystkie niezbędne elementy DOM istnieją
   if (!balanceAmount || !updateBalanceBtn || !showReportsBtn) {
     console.error(
-      'function setupBalance - The DOM elements needed for operation do not exist'
+      'function setupBalance - Nie znaleziono niezbędnych elementów DOM'
     );
     return;
   }
@@ -106,9 +121,11 @@ export async function setupBalance() {
   // Formularz jest ukryty na początku
   balanceFormContainer.style.display = 'none';
 
+  // Funkcja asynchroniczna do aktualizacji salda
   async function updateBalance(newBalance) {
-    log('function updateBalance - Balance update:', newBalance);
+    log('function updateBalance - Aktualizacja salda:', newBalance);
     try {
+      // Wysłanie żądania PUT do API w celu zaktualizowania salda użytkownika
       const response = await fetch(`${API_URL}/users/balance`, {
         method: 'PUT',
         headers: {
@@ -117,84 +134,94 @@ export async function setupBalance() {
         },
         body: JSON.stringify({ balance: parseFloat(newBalance) }),
       });
+      // Parsowanie odpowiedzi jako JSON
       const data = await response.json();
-      log('function updateBalance - Balance updated:', data);
+      log('function updateBalance - Saldo zaktualizowane:', data);
+      // Aktualizacja wyświetlanego salda
       balanceAmount.textContent = `${data.balance.toFixed(2)} EUR`;
 
+      // Jeśli saldo wynosi zero, wyświetl modal informacyjny
       if (data.balance === 0) {
-        log('function updateBalance - Showing modal because balance is 0');
+        log(
+          'function updateBalance - Wyświetlanie modalu, ponieważ saldo wynosi 0'
+        );
         showZeroBalanceModal();
       }
     } catch (error) {
+      // Obsługa błędów podczas aktualizacji salda
       console.error(
-        'function updateBalance - Error while updating balance:',
+        'function updateBalance - Błąd podczas aktualizacji salda:',
         error
       );
       showModal({
         message:
-          'function updateBalance - An error occurred while updating the balance sheet',
+          'function updateBalance - Wystąpił błąd podczas aktualizacji salda',
         confirmLabel: 'OK',
         confirmAction: () => {},
       });
     }
   }
 
-  // Wyświetlenie formularza po kliknięciu przycisku
+  // Obsługa kliknięcia przycisku "Update" - wyświetlenie formularza
   updateBalanceBtn.addEventListener('click', () => {
-    log('updateBalanceBtn - Update balance button clicked');
-    balanceFormContainer.style.display = 'block'; // wyświetl formularz
+    log('updateBalanceBtn - Kliknięto przycisk aktualizacji salda');
+    balanceFormContainer.style.display = 'block'; // Wyświetl formularz
   });
 
   // Obsługa potwierdzenia zmiany salda
   confirmBalanceBtn.addEventListener('click', async () => {
     const newBalance = newBalanceInput.value;
     if (newBalance) {
-      log('confirmBalanceBtn - New balance confirmed:', newBalance);
+      log('confirmBalanceBtn - Nowe saldo potwierdzone:', newBalance);
       showConfirmationModal(
-        'Are you sure you want to update your balance?',
+        'Czy na pewno chcesz zaktualizować saldo?',
         async () => {
           await updateBalance(newBalance);
-          balanceFormContainer.style.display = 'none'; // ukryj formularz
+          balanceFormContainer.style.display = 'none'; // Ukryj formularz
         }
       );
     }
   });
 
-  // Obsługa anulowania
+  // Obsługa anulowania zmiany salda
   cancelBalanceBtn.addEventListener('click', () => {
-    log('cancelBalanceBtn - Balance update canceled');
-    balanceFormContainer.style.display = 'none'; // ukryj formularz
+    log('cancelBalanceBtn - Aktualizacja salda została anulowana');
+    balanceFormContainer.style.display = 'none'; // Ukryj formularz
   });
 
-  // Obsługa przekierowania do raportów bez odświeżania strony
+  // Obsługa kliknięcia przycisku "Reports" - nawigacja do raportów bez przeładowania strony
   showReportsBtn.addEventListener('click', event => {
     event.preventDefault(); // Zapobiegaj domyślnemu odświeżeniu strony
-    log('showReportsBtn - Go to reports');
+    log('showReportsBtn - Przejście do sekcji raportów');
 
     // Obsługa dynamicznego przechodzenia do raportów bez przeładowania strony
     // Możesz dodać logikę nawigacji do raportów, np. zmiana widoku
     navigateToReports(); // Placeholder dla funkcji przejścia do raportów
   });
 
+  // Pobranie początkowego salda po załadowaniu komponentu
   await fetchBalance();
 
+  // Zwracanie funkcji umożliwiających aktualizację i odświeżenie salda
   return {
     updateBalance,
     refreshBalance: fetchBalance,
   };
 }
 
+// Zmienna globalna, aby upewnić się, że modal zerowego salda jest wyświetlany tylko raz
 let zeroBalanceModalShown = false;
 
+// Funkcja do wyświetlania modalu informacyjnego, gdy saldo wynosi zero
 export function showZeroBalanceModal() {
   if (zeroBalanceModalShown) {
     return;
   }
 
-  log('function showZeroBalanceModal - Showing modal for zero balance');
+  log('function showZeroBalanceModal - Wyświetlanie modalu dla zerowego salda');
   showModal({
     message:
-      "Hello! To get started, enter the current balance of your account! You can't spend money until you have it :)",
+      'Witaj! Aby rozpocząć, wprowadź aktualne saldo swojego konta! Nie możesz wydawać pieniędzy, dopóki ich nie masz :)',
     confirmLabel: 'OK',
     confirmAction: () => {
       zeroBalanceModalShown = false;
@@ -205,6 +232,7 @@ export function showZeroBalanceModal() {
   zeroBalanceModalShown = true;
 }
 
+// Funkcja asynchroniczna sprawdzająca saldo i wyświetlająca modal, jeśli saldo wynosi zero
 export async function checkAndShowZeroBalanceModal() {
   const balance = await fetchBalance();
   if (balance === 0) {
@@ -212,9 +240,9 @@ export async function checkAndShowZeroBalanceModal() {
   }
 }
 
-// Placeholder function for navigating to reports
+// Placeholder dla funkcji nawigacji do raportów
 function navigateToReports() {
-  log('navigateToReports - Navigating to reports section');
+  log('navigateToReports - Nawigacja do sekcji raportów');
   // Tutaj możesz dodać kod do zmiany widoku na raporty bez przeładowania strony
   // np. wyświetlenie sekcji raportów lub zmiana ścieżki w routerze aplikacji.
 }
