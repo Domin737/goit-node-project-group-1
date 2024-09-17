@@ -11,20 +11,32 @@ import './styles/index.scss';
 
 // Funkcja renderująca aplikację w zależności od stanu uwierzytelnienia użytkownika
 function renderApp() {
-  // Pobranie tokena JWT z localStorage
-  const token = localStorage.getItem('userToken');
+  try {
+    // Pobranie tokena JWT z localStorage
+    const token = localStorage.getItem('userToken');
 
-  // Pobranie referencji do głównego kontenera aplikacji w DOM
-  const appContainer = document.getElementById('app');
+    // Pobranie referencji do głównego kontenera aplikacji w DOM
+    const appContainer = document.getElementById('app');
 
-  if (token) {
-    // Jeśli token istnieje, renderujemy stronę główną i inicjalizujemy jej funkcjonalności
-    appContainer.innerHTML = HomePage();
-    setupHomePage();
-  } else {
-    // Jeśli token nie istnieje, renderujemy stronę logowania i inicjalizujemy formularze autoryzacji
-    appContainer.innerHTML = LoginPage();
-    setupAuthForms();
+    if (token) {
+      // Jeśli token istnieje, renderujemy stronę główną i inicjalizujemy jej funkcjonalności
+      appContainer.innerHTML = HomePage();
+      setupHomePage();
+    } else {
+      // Jeśli token nie istnieje, renderujemy stronę logowania i inicjalizujemy formularze autoryzacji
+      appContainer.innerHTML = LoginPage();
+      setupAuthForms();
+    }
+  } catch (error) {
+    // Obsługa błędów podczas renderowania aplikacji
+    console.error('Error rendering the application:', error);
+
+    // Wyświetlenie komunikatu o błędzie użytkownikowi
+    const appContainer = document.getElementById('app');
+    if (appContainer) {
+      appContainer.innerHTML =
+        '<p>An unexpected error occurred. Please try again later.</p>';
+    }
   }
 }
 
