@@ -1,5 +1,8 @@
 // src/utils/logoutUtils.js
 
+// Importowanie stałej API_URL z konfiguracji
+import { API_URL } from '../config';
+
 // Funkcja asynchroniczna do obsługi wylogowania użytkownika
 export async function handleLogout() {
   try {
@@ -13,7 +16,7 @@ export async function handleLogout() {
     }
 
     // Wysłanie żądania POST do endpointu wylogowania
-    const response = await fetch(`api/users/logout`, {
+    const response = await fetch(`${API_URL}/users/logout`, {
       method: 'POST',
       headers: {
         // Dodanie nagłówka Authorization z tokenem
