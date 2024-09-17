@@ -110,7 +110,7 @@ export function setupTransactionForm(onTransactionAdded) {
   const amountInput = form.querySelector('#transaction-amount');
   amountInput.addEventListener('input', () => {
     const value = parseFloat(amountInput.value);
-    if (isNaN(value) || value <= 0) {
+    if (Number.isNaN(value) || value <= 0) {
       amountInput.setCustomValidity('Amount must be greater than zero.');
     } else {
       amountInput.setCustomValidity('');
