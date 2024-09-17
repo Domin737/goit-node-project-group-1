@@ -27,6 +27,12 @@ export async function setupSummaryList(type) {
         Authorization: `Bearer ${localStorage.getItem('userToken')}`,
       },
     });
+
+    // Sprawdzenie, czy odpowiedź jest poprawna
+    if (!response.ok) {
+      throw new Error('Failed to fetch transactions');
+    }
+
     // Parsowanie odpowiedzi jako JSON
     const transactions = await response.json();
 
@@ -38,6 +44,12 @@ export async function setupSummaryList(type) {
       `SummaryList - Błąd podczas pobierania transakcji typu ${type}:`,
       error
     );
+
+    // Wyświetlenie komunikatu o błędzie w interfejsie użytkownika
+    const summaryList = document.getElementById('summary-list');
+    if (summaryList) {
+      summaryList.innerHTML = '<li>Error loading summary</li>';
+    }
   }
 }
 
@@ -45,8 +57,14 @@ export async function setupSummaryList(type) {
 function renderSummaryList(transactions) {
   // Logowanie danych transakcji
   log('renderSummaryList', transactions);
+
   // Pobranie referencji do elementu DOM, w którym będzie wyświetlana lista podsumowania
   const summaryList = document.getElementById('summary-list');
+
+  if (!summaryList) {
+    console.error('renderSummaryList - Nie znaleziono elementu #summary-list');
+    return;
+  }
 
   // Tablica z nazwami miesięcy
   const monthsNames = [
@@ -64,8 +82,8 @@ function renderSummaryList(transactions) {
     'December',
   ];
 
-  // Inicjalizacja Mapy do przechowywania sumy transakcji dla każdego miesiąca
-  const months = new Map();
+  // Inicjalizacja obiektu do przechowywania sumy transakcji dla każdego miesiąca
+  const months = {};
 
   // Iteracja po wszystkich transakcjach
   transactions.forEach(transaction => {
@@ -80,23 +98,26 @@ function renderSummaryList(transactions) {
     // Pobranie kwoty transakcji
     const amount = transaction.amount;
 
-    // Sprawdzenie, czy dla danego miesiąca istnieje już suma transakcji
-    if (months.has(key)) {
-      // Jeśli tak, dodaj kwotę transakcji do istniejącej sumy
-      months.set(key, months.get(key) + amount);
-    } else {
-      // Jeśli nie, utwórz nowy wpis w Mapie dla tego miesiąca z aktualną kwotą
-      months.set(key, amount);
-    }
+    // Dodanie kwoty do sumy dla danego miesiąca
+    months[key] = (months[key] || 0) + amount;
   });
 
-  // Generowanie HTML listy podsumowania na podstawie danych w Mapie months
-  summaryList.innerHTML = [...months.entries()]
-    .map(month => {
+  // Sortowanie miesięcy w porządku chronologicznym
+  const sortedMonths = Object.keys(months).sort((a, b) => {
+    const [yearA, monthA] = a.split(' ');
+    const [yearB, monthB] = b.split(' ');
+    const dateA = new Date(`${monthA} 1, ${yearA}`);
+    const dateB = new Date(`${monthB} 1, ${yearB}`);
+    return dateB - dateA; // Od najnowszego do najstarszego
+  });
+
+  // Generowanie HTML listy podsumowania na podstawie danych
+  summaryList.innerHTML = sortedMonths
+    .map(monthKey => {
       return `
         <li>
-          <span class="month">${month[0]}</span>
-          <span class="amount">${month[1].toFixed(2)}</span>
+          <span class="month">${monthKey}</span>
+          <span class="amount">${months[monthKey].toFixed(2)}</span>
         </li>
       `;
     })
