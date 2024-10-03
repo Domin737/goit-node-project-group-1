@@ -24,7 +24,7 @@
     "http-proxy-middleware": "^2.0.6",
     "jsonwebtoken": "^9.0.2",
     "modern-normalize": "^3.0.1",
-    "mongoose": "^8.5.3",
+    "mongoose": "^8.6.2",
     "nodemon": "^2.0.22",
     "parcel": "^2.6.0",
     "supervisor": "^0.12.0"
